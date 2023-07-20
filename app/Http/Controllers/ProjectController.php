@@ -76,7 +76,7 @@ class ProjectController extends Controller
     {
         //kiem tra xem user co la workspace_admin, pm hay member, tuc la kiem tra user có thuộc project hay không
         $project = Project::findOrFail($id);
-        return response()->json(['status'=>'true', 'message'=>'Details of Project!', 'data'=>$workspace]);
+        return response()->json(['status'=>'true', 'message'=>'Details of Project!', 'data'=>$project]);
 
 
     }
@@ -107,7 +107,7 @@ class ProjectController extends Controller
             $validator = Validator::make($request->all(), [
                 'name'                =>  'required|string|unique:projects,name,except,id',
                 'description'         =>   'required',  
-                'start_date'              =>  'required|date_format:Y-m-d H:i:s', 
+                'start_date'              =>  'required|date_format:Y-m-d', 
             ]);
 
             if($validator->fails()){
@@ -119,7 +119,7 @@ class ProjectController extends Controller
                 if(($request->user()->role === UserRole::WORKSPACE_ADMIN || $request->user()->role === UserRole::PM) && $project ){
                     $project->name = $request->name;
                     $project->description = $request->description;
-                    $workspace->domain = $request->domain;
+                    $project->start_date = $request->start_date;
                     // $old_path = $workspace->avatar;
                 //     if(strcmp($request->avatar, $old_path) === 0  && $request->avatar->isValid()){
                 //         $file_name = $user->id.'.'.$request->avatar->extension();
@@ -127,9 +127,9 @@ class ProjectController extends Controller
                 //         $path = "images/avatars/$file_name ";
                 //         $user->avatar = $path;
                 // }
-                    $workspace->update();
+                    $project->update();
                     // $workspace->makeHidden(['secret_code', 'secret_key', 'workspace_admin_id']);
-                    return response()->json(['status'=>'true', 'message'=>'Workspace Updated!', 'data'=>$workspace]);
+                    return response()->json(['status'=>'true', 'message'=>'Project Updated!', 'data'=>$project]);
                 }
                 if($request->user()->role !== UserRole::WORKSPACE_ADMIN || $request->user()->workspace_id = $workspace->id) 
                     return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);

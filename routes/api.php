@@ -43,6 +43,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/add_member_to_project', [ProjectController::class, 'addMemberToProject']);
     Route::post('/add_list_members_to_project', [ProjectController::class, 'addListMembersToProject']);
     Route::get('/project/{id}', [ProjectController::class, 'show']);
+    Route::post('/project/{id}', [ProjectController::class, 'update']);
     Route::get('/members_of_project/{id}', [ProjectController::class, 'getAllMembersOfProject']);
 });
 
