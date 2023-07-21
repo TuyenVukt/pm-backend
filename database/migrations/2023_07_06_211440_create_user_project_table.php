@@ -17,6 +17,7 @@ class CreateUserProjectTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('project_id');
             $table->decimal('role');
+            $table->primary(['user_id', 'project_id']);
             $table->timestamps();
         });
     }
