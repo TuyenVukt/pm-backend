@@ -7,6 +7,8 @@ use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\MilestoneController;
+use App\Http\Controllers\IssueController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -37,6 +39,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     //workspace
     Route::post('/workspace', [WorkspaceController::class, 'create']);
     Route::get('/workspace/{id}', [WorkspaceController::class, 'show']);
+    // Route::get('/get_projects/{id}', [WorkspaceController::class, 'getProjectsOfAWorkspace']);
     Route::post('/workspace/{id}', [WorkspaceController::class, 'edit']);
     //project
     Route::post('/project', [ProjectController::class, 'create']);
@@ -45,6 +48,16 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/project/{id}', [ProjectController::class, 'show']);
     Route::post('/project/{id}', [ProjectController::class, 'update']);
     Route::get('/members_of_project/{id}', [ProjectController::class, 'getAllMembersOfProject']);
+    //milesdtone 
+    Route::post('/milestone', [MilestoneController::class, 'store']);
+    Route::get('/milestone/{id}', [MilestoneController::class, 'show']);
+    Route::get('/project/{id}/milestones', [MilestoneController::class, 'getMilestoneByProject']);
+    Route::post('/milestone/{id}', [MilestoneController::class, 'update']);
+    //issue
+    Route::post('/issue', [IssueController::class, 'store']);
+
+
+
 });
 
 Route::post('/login', [AuthController::class, 'login']);

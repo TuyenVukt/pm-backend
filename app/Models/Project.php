@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Milestone;
 
 class Project extends Model
 {
@@ -20,5 +21,9 @@ class Project extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'user_project');
+    }
+
+    public function milestones(){
+        return $this->hasMany(Milestone::class);
     }
 }

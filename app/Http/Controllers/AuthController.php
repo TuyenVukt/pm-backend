@@ -20,7 +20,7 @@ class AuthController extends Controller
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return response([
-                'mmessage' => 'Incorrect username or password'
+                'message' => 'Incorrect username or password'
             ], 401);
         }
 

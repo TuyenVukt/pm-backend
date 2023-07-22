@@ -29,7 +29,6 @@ class ProjectController extends Controller
      */
     public function create(Request $request)
     {
-
             $validator = Validator::make($request->all(), [
                 'name'                =>  'required|string|unique:projects,name,except,id',
                 'project_key'         =>  'required',
@@ -105,9 +104,10 @@ class ProjectController extends Controller
         if(1){ 
 
             $validator = Validator::make($request->all(), [
-                'name'                =>  'required|string|unique:projects,name,except,id',
+                'name'                =>  'required|string',
                 'description'         =>   'required',  
-                'start_date'              =>  'required|date_format:Y-m-d', 
+                'start_date'          =>  'required|date_format:Y-m-d', 
+                'due_date'            =>  'nullable|date_format:Y-m-d'
             ]);
 
             if($validator->fails()){
@@ -120,6 +120,7 @@ class ProjectController extends Controller
                     $project->name = $request->name;
                     $project->description = $request->description;
                     $project->start_date = $request->start_date;
+                    if($request->due_date) $project->due_date = $request->due_date;
                     // $old_path = $workspace->avatar;
                 //     if(strcmp($request->avatar, $old_path) === 0  && $request->avatar->isValid()){
                 //         $file_name = $user->id.'.'.$request->avatar->extension();
