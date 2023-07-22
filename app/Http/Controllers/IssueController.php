@@ -127,7 +127,81 @@ class IssueController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if(1){ 
+
+            if(1){ 
+                $validator = Validator::make($request->all(), [
+                    'title'                 =>  'required|string',
+                    'description'           =>  'required',   
+                    'start_time'            =>  'nullable|date_format:Y-m-d',
+                    'end_time'              =>  'nullable|date_format:Y-m-d',
+                    'project_id'            =>  'required',
+                    'milestone_id'          =>  'required',
+                    'status'                =>  'required',
+                    'category'              =>  'required',
+                    'priority'              =>  'required',
+            
+                ]);
+
+            if($validator->fails()){
+                $error = $validator->errors()->all()[0];
+                return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
+            } else {
+                $project = Project::find($id);
+
+                if(($request->user()->role === UserRole::WORKSPACE_ADMIN || $request->user()->role === UserRole::PM) && $project ){
+                    $project->name = $request->name;
+                    $project->description = $request->description;
+                    $project->start_date = $request->start_date;
+                    if($request->due_date) $project->due_date = $request->due_date;
+                    // $old_path = $workspace->avatar;
+                //     if(strcmp($request->avatar, $old_path) === 0  && $request->avatar->isValid()){
+                //         $file_name = $user->id.'.'.$request->avatar->extension();
+                //         $request->file('avatar')->storeAs('public/images/avatars', $file_name );
+                //         $path = "images/avatars/$file_name ";
+                //         $user->avatar = $path;
+                // }
+                    $project->update();
+                    // $workspace->makeHidden(['secret_code', 'secret_key', 'workspace_admin_id']);
+                    return response()->json(['status'=>'true', 'message'=>'Project Updated!', 'data'=>$project]);
+                }
+                if($request->user()->role !== UserRole::WORKSPACE_ADMIN || $request->user()->workspace_id = $workspace->id) 
+                    return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
+                if(is_null($workspace)) 
+                    return response()->json(['status'=>'false', 'message'=>'Workspace not found!', 'data'=>[]], 404);
+
+            }
+
+            
+            return response()->json(['status'=>'true', 'message'=>'Workspace Edited!', 'data'=>$workspace]);
+        } else return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
+
+            if($validator->fails()){
+                $error = $validator->errors()->all()[0];
+                return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
+            } else {
+                $project = Project::find($id);
+
+                if(($request->user()->role === UserRole::WORKSPACE_ADMIN || $request->user()->role === UserRole::PM) && $project ){
+                    $project->name = $request->name;
+                    $project->description = $request->description;
+                    $project->start_date = $request->start_date;
+                    if($request->due_date) $project->due_date = $request->due_date;
+
+                    $project->update();
+                    // $workspace->makeHidden(['secret_code', 'secret_key', 'workspace_admin_id']);
+                    return response()->json(['status'=>'true', 'message'=>'Project Updated!', 'data'=>$project]);
+                }
+                if($request->user()->role !== UserRole::WORKSPACE_ADMIN || $request->user()->workspace_id = $workspace->id) 
+                    return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
+                if(is_null($workspace)) 
+                    return response()->json(['status'=>'false', 'message'=>'Workspace not found!', 'data'=>[]], 404);
+
+            }
+
+            
+            return response()->json(['status'=>'true', 'message'=>'Workspace Edited!', 'data'=>$workspace]);
+        } else return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
     }
 
     /**

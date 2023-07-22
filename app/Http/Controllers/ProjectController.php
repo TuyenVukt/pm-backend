@@ -47,6 +47,7 @@ class ProjectController extends Controller
                         'start_date'      =>  $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d H:i:s'),
                         'workspace_id'    =>  $request->user()->workspace_id
                     ]);
+                    
                     return response()->json(['status'=>'true', 'message'=>'Project Created!', 'data'=>$project]);
                 } else
                     return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
@@ -75,7 +76,7 @@ class ProjectController extends Controller
     {
         //kiem tra xem user co la workspace_admin, pm hay member, tuc la kiem tra user có thuộc project hay không
         $project = Project::findOrFail($id);
-        return response()->json(['status'=>'true', 'message'=>'Details of Project!', 'data'=>$project]);
+        return response()->json(['status'=>'true', 'message'=>'Details of Project', 'data'=>$project]);
 
 
     }

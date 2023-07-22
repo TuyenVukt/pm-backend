@@ -29,9 +29,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         return $title;
     });
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/test', function () {
-        return "12345";
-    });
+
     Route::get('/member_workspace', [UserController::class,'getAllUserInWorkspace']);
     Route::get('/my_profile', [UserController::class,'getProfile']);
     Route::post('/update_profile', [UserController::class,'updateProfile']);
@@ -66,4 +64,7 @@ Route::post('/email/verification-notification', [EmailVerificationController::cl
 Route::get('/verify-email/{id}/{token}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/delete', [UserController::class,'deleteImg']);
 Route::get('/avatar/{id}', [UserController::class,'showAvatar']);
+Route::get('/test', function () {
+    return "12345";
+});
 
