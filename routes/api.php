@@ -30,14 +30,14 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     });
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/member_workspace', [UserController::class,'getAllUserInWorkspace']);
+    Route::get('/member_workspace/{id}', [UserController::class,'getAllUserInWorkspace']);
     Route::get('/my_profile', [UserController::class,'getProfile']);
     Route::post('/update_profile', [UserController::class,'updateProfile']);
     Route::post('/update_member/{id}', [UserController::class,'updateMemberProfile']);
     //workspace
     Route::post('/workspace', [WorkspaceController::class, 'create']);
     Route::get('/workspace/{id}', [WorkspaceController::class, 'show']);
-    // Route::get('/get_projects/{id}', [WorkspaceController::class, 'getProjectsOfAWorkspace']);
+    Route::get('/get_projects_by_workspace/{id}', [WorkspaceController::class, 'getProjectsByWorkspace']);
     Route::post('/workspace/{id}', [WorkspaceController::class, 'edit']);
     //project
     Route::post('/project', [ProjectController::class, 'create']);

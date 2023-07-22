@@ -20,4 +20,17 @@ class Workspace extends Model
     ];
 
     protected $hidden = ['secret_code', 'secret_key', 'workspace_admin_id'];
+
+    public function projects(){
+        return $this->hasMany(Project::class);
+    }
+
+    public function users(){
+        return $this->hasMany(User::class);
+    }
+
+
+
+
+
 }

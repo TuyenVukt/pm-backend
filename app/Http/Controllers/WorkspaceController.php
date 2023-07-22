@@ -136,6 +136,18 @@ class WorkspaceController extends Controller
         } else return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
     }
 
+    public function getProjectsByWorkspace(Request $request, $id)
+    {
+        if($request->user()->workspace_id == $id){
+            $workspace = Workspace::findOrFail($id);
+            if($workspace && $workspace->projects) 
+                return response()->json(['status'=>'true', 'message'=>'Projects of Workspace', 'data'=>$workspace->projects]);
+                return response()->json(['status'=>'true', 'message'=>'Projects of Workspace', 'data'=>[]]);
+        } else 
+            return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
+    }
+
+
     /**
      * Update the specified resource in storage.
      *
