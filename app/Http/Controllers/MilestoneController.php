@@ -42,8 +42,8 @@ class MilestoneController extends Controller
         $validator = Validator::make($request->all(), [
             'title'                =>  'required|string|unique:milestones,title,except,id',
             'description'          =>  'required',   
-            'start_date'           =>  'required|date_format:Y-m-d', 
-            'due_date'             =>  'required|date_format:Y-m-d',
+            'start_date'           =>  'required', 
+            'due_date'             =>  'required',
             'project_id'           =>  'required',  
         ]);
 
@@ -116,8 +116,8 @@ class MilestoneController extends Controller
             $validator = Validator::make($request->all(), [
                 'title'                =>  'required|string',
                 'description'         =>   'required',  
-                'start_date'          =>  'required|date_format:Y-m-d', 
-                'due_date'            =>  'nullable|date_format:Y-m-d'
+                'start_date'          =>  'required', 
+                'due_date'            =>  'nullable'
             ]);
             if($validator->fails()){
                 $error = $validator->errors()->all()[0];

@@ -107,8 +107,8 @@ class ProjectController extends Controller
             $validator = Validator::make($request->all(), [
                 'name'                =>  'required|string',
                 'description'         =>   'required',  
-                'start_date'          =>  'required|date_format:Y-m-d', 
-                'due_date'            =>  'nullable|date_format:Y-m-d'
+                'start_date'          =>  'required', 
+                'due_date'            =>  'nullable'
             ]);
 
             if($validator->fails()){

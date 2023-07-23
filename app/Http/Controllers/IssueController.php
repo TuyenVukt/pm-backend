@@ -61,8 +61,8 @@ class IssueController extends Controller
     $validator = Validator::make($request->all(), [
         'title'                 =>  'required|string|unique:issues,title,except,id',
         'description'           =>  'required',   
-        'start_time'            =>  'nullable|date_format:Y-m-d',
-        'end_time'              =>  'nullable|date_format:Y-m-d',
+        'start_time'            =>  'nullable',
+        'end_time'              =>  'nullable',
         'project_id'            =>  'required',
         'milestone_id'          =>  'required',
         'status'                =>  'required',
@@ -133,8 +133,8 @@ class IssueController extends Controller
                 $validator = Validator::make($request->all(), [
                     'title'                 =>  'required|string',
                     'description'           =>  'required',   
-                    'start_time'            =>  'nullable|date_format:Y-m-d',
-                    'end_time'              =>  'nullable|date_format:Y-m-d',
+                    'start_time'            =>  'nullable',
+                    'end_time'              =>  'nullable',
                     'project_id'            =>  'required',
                     'milestone_id'          =>  'required',
                     'status'                =>  'required',

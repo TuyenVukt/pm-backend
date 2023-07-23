@@ -147,6 +147,19 @@ class WorkspaceController extends Controller
             return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
     }
 
+    public function getMembersByWorkspace(Request $request, $id)
+    {
+        
+        if($request->user()->workspace_id == $id){
+            $workspace = Workspace::findOrFail($id);
+            // return  $workspace;
+            if($workspace && $workspace->members) 
+                return response()->json(['status'=>'true', 'message'=>'Members of Workspace', 'data'=>$workspace->members]);
+                return response()->json(['status'=>'true', 'message'=>'Members of Workspace', 'data'=>[]]);
+        } else 
+            return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
+    }
+
 
     /**
      * Update the specified resource in storage.

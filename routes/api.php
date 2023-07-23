@@ -38,6 +38,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/workspace', [WorkspaceController::class, 'create']);
     Route::get('/workspace/{id}', [WorkspaceController::class, 'show']);
     Route::get('/get_projects_by_workspace/{id}', [WorkspaceController::class, 'getProjectsByWorkspace']);
+    Route::get('/get_members_by_workspace/{id}', [WorkspaceController::class, 'getMembersByWorkspace']);
     Route::post('/workspace/{id}', [WorkspaceController::class, 'edit']);
     //project
     Route::post('/project', [ProjectController::class, 'create']);
