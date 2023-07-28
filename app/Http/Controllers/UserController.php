@@ -37,6 +37,20 @@ class UserController extends Controller
         }
     }
 
+    public function getMemberById(Request $request, $id){
+        try{
+            // $user_id = $request->user()->id;
+            $data  = User::find($id);
+            if($request->user()->workspace_id == $data->workspace_id) 
+                return response()->json(['status'=>'true', 'message'=>"Profile gotten successfully  ", 'data'=>$data]);
+            
+        } catch (\Exception $e){
+            return response()->json(['status'=>'false', 'message'=>$e->getMessage(), 'data'=>[]], 500);
+        }
+    }
+
+
+
     public function updateProfile(Request $request)
     {
         try {

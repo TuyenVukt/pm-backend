@@ -23,7 +23,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role',
-        // 'workspace_id'
+        'workspace_id',
     ];
 
     /**

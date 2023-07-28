@@ -30,8 +30,7 @@ class WorkspaceController extends Controller
         $data = $request->validate([
             'name'          =>      'required|string|unique:workspaces,name,except,id',
             'organization'  =>      'required|string',
-            'domain'        =>      'required|string',
-            'secret_code'   =>      'required|string' 
+            'domain'        =>      'required|string'
         ]);
 
         $key = $data['domain'] . $data['secret_code'];

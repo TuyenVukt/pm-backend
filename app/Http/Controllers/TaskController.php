@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Issue;
+use App\Models\Task;
 
-class IssueController extends Controller
+class TaskController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -79,7 +79,6 @@ class IssueController extends Controller
         $issue = Issue::create([
             'title'                 =>  $request->title,
             'description'           =>  $request->description,   
-            'start_time'            =>  $request->start_time,
             'project_id'            =>  $request->project_id,
             'milestone_id'          =>  $request->milestone_id,
             'created_user_id'       =>  $request->user()->id,
@@ -104,7 +103,9 @@ class IssueController extends Controller
      */
     public function show($id)
     {
-        //
+        //kiem tra xem user co thuoc project hay khong?
+        $issue = Issue::findOrFail($id);
+        if($issue) return response()->json(['status'=>'true', 'message'=>'Details of Issue', 'data'=>$issue]);
     }
 
     /**
@@ -127,81 +128,104 @@ class IssueController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //kiểm tra xem user này có quyền update không ()
+        //bắt buộc: title, descripton,project_id, milestone_id, status, category, priority
+        //start_time và end_time, assign_id thì có thể thêm sau.
         if(1){ 
-
             if(1){ 
                 $validator = Validator::make($request->all(), [
                     'title'                 =>  'required|string',
                     'description'           =>  'required',   
                     'start_time'            =>  'nullable',
                     'end_time'              =>  'nullable',
-                    'project_id'            =>  'required',
                     'milestone_id'          =>  'required',
                     'status'                =>  'required',
                     'category'              =>  'required',
-                    'priority'              =>  'required',
-            
+                    'priority'              =>  'required',  
                 ]);
 
             if($validator->fails()){
                 $error = $validator->errors()->all()[0];
                 return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
             } else {
-                $project = Project::find($id);
+                $issue = Issue::find($id);
+                if($issue){
+                    $issue->title = $request->title;
+                    $issue->description = $request->description;
+                    $issue->milestone_id = $request->milestone_id;
+                    $issue->status = $request->status;
+                    $issue->category = $request->category;
+                    $issue->priority = $request->priority;
+                    if($request->start_time) $project->start_date = $request->start_date;
+                    if($request->end_time) $project->end_time = $request->end_time;
+                    //check có thuộc project không?
+                    if($request->asignee_id) $issue->asignee_id = $request->asignee_id;
+                    //check sub task
+                    // if($request->is_child && $request->parent_id) {
+                    //     $parent = Issue::find($request->parent_id);
+                    //     if($parent){
+                    //         $issue->is_child = $request->is_child;
+                    //         $issue->parent_id =  $request->parent_id;
+                    //     }
 
-                if(($request->user()->role === UserRole::WORKSPACE_ADMIN || $request->user()->role === UserRole::PM) && $project ){
-                    $project->name = $request->name;
-                    $project->description = $request->description;
-                    $project->start_date = $request->start_date;
-                    if($request->due_date) $project->due_date = $request->due_date;
-                    // $old_path = $workspace->avatar;
-                //     if(strcmp($request->avatar, $old_path) === 0  && $request->avatar->isValid()){
-                //         $file_name = $user->id.'.'.$request->avatar->extension();
-                //         $request->file('avatar')->storeAs('public/images/avatars', $file_name );
-                //         $path = "images/avatars/$file_name ";
-                //         $user->avatar = $path;
-                // }
-                    $project->update();
-                    // $workspace->makeHidden(['secret_code', 'secret_key', 'workspace_admin_id']);
-                    return response()->json(['status'=>'true', 'message'=>'Project Updated!', 'data'=>$project]);
+                        
+                    // }
+
+                    $issue->update();
+                    return response()->json(['status'=>'true', 'message'=>'Issue Updated!', 'data'=>$issue]);
                 }
-                if($request->user()->role !== UserRole::WORKSPACE_ADMIN || $request->user()->workspace_id = $workspace->id) 
-                    return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
                 if(is_null($workspace)) 
                     return response()->json(['status'=>'false', 'message'=>'Workspace not found!', 'data'=>[]], 404);
-
             }
-
-            
-            return response()->json(['status'=>'true', 'message'=>'Workspace Edited!', 'data'=>$workspace]);
         } else return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
+    }
+
+    }
+
+    public function update(Request $request, $id)
+    {
+        //kiểm tra xem user này có quyền update không ()
+        //bắt buộc: title, descripton,project_id, milestone_id, status, category, priority
+        //start_time và end_time, assign_id thì có thể thêm sau.
+        if(1){ 
+            if(1){ 
+                $validator = Validator::make($request->all(), [
+                    'title'                 =>  'required|string',
+                    'description'           =>  'required',   
+                    'start_time'            =>  'nullable',
+                    'end_time'              =>  'nullable',
+                    'milestone_id'          =>  'required',
+                    'status'                =>  'required',
+                    'category'              =>  'required',
+                    'priority'              =>  'required',  
+                ]);
 
             if($validator->fails()){
                 $error = $validator->errors()->all()[0];
                 return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
             } else {
-                $project = Project::find($id);
+                $issue = Issue::find($id);
+                if($issue){
+                    $issue->title = $request->title;
+                    $issue->description = $request->description;
+                    $issue->milestone_id = $request->milestone_id;
+                    $issue->status = $request->status;
+                    $issue->category = $request->category;
+                    $issue->priority = $request->priority;
+                    if($request->start_time) $project->start_date = $request->start_date;
+                    if($request->end_time) $project->end_time = $request->end_time;
+                    //check có thuộc project không?
+                    if($request->asignee_id) $issue->asignee_id = $request->asignee_id;
 
-                if(($request->user()->role === UserRole::WORKSPACE_ADMIN || $request->user()->role === UserRole::PM) && $project ){
-                    $project->name = $request->name;
-                    $project->description = $request->description;
-                    $project->start_date = $request->start_date;
-                    if($request->due_date) $project->due_date = $request->due_date;
-
-                    $project->update();
-                    // $workspace->makeHidden(['secret_code', 'secret_key', 'workspace_admin_id']);
-                    return response()->json(['status'=>'true', 'message'=>'Project Updated!', 'data'=>$project]);
+                    $issue->update();
+                    return response()->json(['status'=>'true', 'message'=>'Issue Updated!', 'data'=>$issue]);
                 }
-                if($request->user()->role !== UserRole::WORKSPACE_ADMIN || $request->user()->workspace_id = $workspace->id) 
-                    return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
                 if(is_null($workspace)) 
                     return response()->json(['status'=>'false', 'message'=>'Workspace not found!', 'data'=>[]], 404);
-
             }
-
-            
-            return response()->json(['status'=>'true', 'message'=>'Workspace Edited!', 'data'=>$workspace]);
         } else return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
+    }
+
     }
 
     /**

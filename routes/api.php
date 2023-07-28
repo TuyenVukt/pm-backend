@@ -8,7 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\MilestoneController;
-use App\Http\Controllers\IssueController;
+use App\Http\Controllers\TaskController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -34,6 +34,8 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/my_profile', [UserController::class,'getProfile']);
     Route::post('/update_profile', [UserController::class,'updateProfile']);
     Route::post('/update_member/{id}', [UserController::class,'updateMemberProfile']);
+    Route::get('/member/{id}', [UserController::class,'getMemberById']);
+    
     //workspace
     Route::post('/workspace', [WorkspaceController::class, 'create']);
     Route::get('/workspace/{id}', [WorkspaceController::class, 'show']);
@@ -42,18 +44,24 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/workspace/{id}', [WorkspaceController::class, 'edit']);
     //project
     Route::post('/project', [ProjectController::class, 'create']);
-    Route::post('/add_member_to_project', [ProjectController::class, 'addMemberToProject']);
     Route::post('/add_list_members_to_project', [ProjectController::class, 'addListMembersToProject']);
     Route::get('/project/{id}', [ProjectController::class, 'show']);
     Route::post('/project/{id}', [ProjectController::class, 'update']);
     Route::get('/members_of_project/{id}', [ProjectController::class, 'getAllMembersOfProject']);
-    //milesdtone 
+    //milestone 
     Route::post('/milestone', [MilestoneController::class, 'store']);
     Route::get('/milestone/{id}', [MilestoneController::class, 'show']);
     Route::get('/project/{id}/milestones', [MilestoneController::class, 'getMilestoneByProject']);
     Route::post('/milestone/{id}', [MilestoneController::class, 'update']);
-    //issue
-    Route::post('/issue', [IssueController::class, 'store']);
+    //lấy Task theo milestone
+    //task
+    Route::post('/task', [TaskController::class, 'store']);
+    Route::post('/task/{id}', [TaskController::class, 'update']);
+    Route::get('/task/{id}', [TaskController::class, 'show']);
+    //tạo task cho Task
+    Route::get('/sub_task_by_task/{id}', [TaskController::class, 'getSubTaskByTask']);
+    
+    //
 
 
 
