@@ -30,8 +30,8 @@ class ProjectController extends Controller
     public function create(Request $request)
     {
             $validator = Validator::make($request->all(), [
-                'name'                =>  'required|string|unique:projects,name,except,id',
-                'project_key'         =>  'required',
+                'name'                =>  'required|string|unique:projects,name',
+                'project_key'         =>  'required|string|unique:projects,project_key',
                 'description'         =>  'required',   
             ]);
 
@@ -44,8 +44,8 @@ class ProjectController extends Controller
                         'name'            =>  $request->name,
                         'project_key'     =>  $request->project_key,
                         'description'     =>  $request->description,
-                        'start_date'      =>  $request->start_date ? $request->start_date : Carbon::now()->format('d-m-Y H:i:s'),
-                        'due_date'        =>  $request->due_date ? $request->due_date : Carbon::now()->format('d-m-Y H:i:s'),
+                        'start_date'      =>  $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d'),
+                        'due_date'        =>  $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d'),
                         'workspace_id'    =>  $request->user()->workspace_id
                     ]);
                     

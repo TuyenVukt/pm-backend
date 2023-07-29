@@ -30,12 +30,13 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     });
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    Route::post('/register', [AuthController::class, 'register']);
     Route::get('/member_workspace/{id}', [UserController::class,'getAllUserInWorkspace']);
     Route::get('/my_profile', [UserController::class,'getProfile']);
     Route::post('/update_profile', [UserController::class,'updateProfile']);
     Route::post('/update_member/{id}', [UserController::class,'updateMemberProfile']);
     Route::get('/member/{id}', [UserController::class,'getMemberById']);
-    
+
     //workspace
     Route::post('/workspace', [WorkspaceController::class, 'create']);
     Route::get('/workspace/{id}', [WorkspaceController::class, 'show']);
@@ -48,7 +49,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/project/{id}', [ProjectController::class, 'show']);
     Route::post('/project/{id}', [ProjectController::class, 'update']);
     Route::get('/members_of_project/{id}', [ProjectController::class, 'getAllMembersOfProject']);
-    //milestone 
+    //milestone
     Route::post('/milestone', [MilestoneController::class, 'store']);
     Route::get('/milestone/{id}', [MilestoneController::class, 'show']);
     Route::get('/project/{id}/milestones', [MilestoneController::class, 'getMilestoneByProject']);
@@ -57,10 +58,10 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     //task
     Route::post('/task', [TaskController::class, 'store']);
     Route::post('/task/{id}', [TaskController::class, 'update']);
-    Route::get('/task/{id}', [TaskController::class, 'show']);
+    Route::get('/task/{id}', [TaskController::class, 'findById']);
     //tạo task cho Task
     Route::get('/sub_task_by_task/{id}', [TaskController::class, 'getSubTaskByTask']);
-    
+
     //
 
 
@@ -68,7 +69,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 });
 
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
 Route::post('/email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');
 Route::get('/verify-email/{id}/{token}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/delete', [UserController::class,'deleteImg']);

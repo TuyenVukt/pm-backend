@@ -10,24 +10,24 @@ class Task extends Model
     use HasFactory; 
     
     protected $fillable = [
-        'task_key',
+        // 'task_key',
         'name',                
         'description',      
-        'start_time',    
-        'end_time',      
+        // 'start_time',    
+        // 'end_time',      
         'project_id',     
         'milestone_id',   
-        'estimate_time',//
-        'is_day',//
-        'before_task_id',//
-        'after_task_id',//
+        // 'estimate_time',
+        // 'is_day',//
+        // 'before_task_id',//
+        // 'after_task_id',//
         'created_by',//?
-        'asignee_id',//?
+        // 'asignee_id',//?
         'status',
-        'category',
+        // 'category',
         'priority',
-        'is_parent',
-        'is_child'//
+        // 'is_parent',
+        // 'is_child'//
 
 
 
