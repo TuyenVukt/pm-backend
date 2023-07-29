@@ -46,8 +46,13 @@ class Task extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function issues()
+    public function subTasks()
     {
-        return $this->hasMany(Issue::class);
+        return $this->hasMany(Task::class, 'parent_task_id', 'id');
+    }
+
+    public function parentTask()
+    {
+        return $this->belongsTo(Task::class, 'parent_task_id', 'id');
     }
 }

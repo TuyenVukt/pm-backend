@@ -31,7 +31,7 @@ class TaskController extends Controller
         'start_time'            =>  'nullable',
         'end_time'              =>  'nullable',
         'project_id'            =>  'required',
-        'milestone_id'          =>  'required',
+        'milestone_id'          =>  'nullable',
         'status'                =>  'required',
         'priority'              =>  'required',
     ]);
@@ -40,6 +40,7 @@ class TaskController extends Controller
         $error = $validator->errors()->all()[0];
         return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
     } else {
+
         $project = Project::find($request->project_id);
         $task_key = $project->project_key;
         $issue = Task::create([
@@ -56,12 +57,47 @@ class TaskController extends Controller
         if($request->end_time) $issue->end_time = $request->end_time;
         if($request->asignee_id) $issue->asignee_id = $request->asignee_id;
         $issue->task_key = $task_key .'-'. $issue->id;
-        $issue->save();
-
-        return response()->json(['status'=>'true', 'message'=>'Issue Created!', 'data'=>$issue]);
+        if($request->is_child && $request->parent_task_id){
+            $issue->is_child = true;
+            $issue->parent_task_id = $request->parent_task_id;
+            $issue->save();
+            $parentTask = Task::findOrFail($request->parent_task_id);
+            $parentTask->subTasks()->save($issue);
+            
         }
-    }
+        $issue->save();
+        return response()->json(['status'=>'true', 'message'=>'Issue Created!', 'data'=>$issue]);
 
+        
+    }
+}
+       // Lấy task cha cùng với task con
+       public function getParentTaskWithSubTasks($taskId)
+       {
+           $task = Task::with('subTasks')->findOrFail($taskId);
+   
+           return response()->json([
+               'status' => 'true',
+               'message' => 'Task with SubTasks retrieved successfully',
+               'data' => $task,
+           ]);
+       }
+
+       public function getTasksWithSubTasksInProject($projectId)
+       {
+           $tasks = Task::with('subTasks')
+               ->where('project_id', $projectId)
+               ->whereNull('parent_task_id')
+               ->orderBy('id', 'desc')
+               ->get();
+   
+           return response()->json([
+               'status' => 'true',
+               'message' => 'Tasks with SubTasks in Project retrieved successfully',
+               'code_bug' => 200,
+               'data' => $tasks,
+           ]);
+       }
     /**
      * Display the specified resource.
      *
@@ -114,7 +150,7 @@ class TaskController extends Controller
                     'start_time'            =>  'nullable',
                     'end_time'              =>  'nullable',
                     'project_id'            =>  'required',
-                    'milestone_id'          =>  'required',
+                    'milestone_id'          =>  'nullable',
                     'status'                =>  'required',
                     'priority'              =>  'required',
                 ]);
