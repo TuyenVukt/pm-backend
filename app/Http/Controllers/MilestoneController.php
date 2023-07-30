@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Carbon;
 use App\Models\Milestone;
 use App\Models\Project;
 
@@ -40,10 +41,10 @@ class MilestoneController extends Controller
     {  
         //ai có quyền tạo
         $validator = Validator::make($request->all(), [
-            'title'                =>  'required|string|unique:milestones,title,except,id',
-            'description'          =>  'required',   
-            'start_date'           =>  'required|date_format:Y-m-d', 
-            'due_date'             =>  'required|date_format:Y-m-d',
+            'name'                =>  'required|string|unique:milestones,name,except,id',
+            'description'          =>  'nullable',   
+            'start_date'           =>  'nullable', 
+            'due_date'             =>  'nullable',
             'project_id'           =>  'required',  
         ]);
 
@@ -52,10 +53,10 @@ class MilestoneController extends Controller
             return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
         } else {
             $milestone = Milestone::create([
-                'title'             => $request->title,
+                'name'             => $request->name,
                 'description'       => $request->description,
-                'start_date'        => $request->start_date,
-                'due_date'          => $request->due_date,
+                'start_date'      =>  $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d'),
+                'due_date'        =>  $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d'),
                 'project_id'        => $request->project_id,
                 'created_by'        => $request->user()->id,
             ]);
@@ -114,10 +115,10 @@ class MilestoneController extends Controller
     {
         try{
             $validator = Validator::make($request->all(), [
-                'title'                =>  'required|string',
-                'description'         =>   'required',  
-                'start_date'          =>  'required|date_format:Y-m-d', 
-                'due_date'            =>  'nullable|date_format:Y-m-d'
+                'name'                =>  'required|string',
+                'description'         =>   'nullable',  
+                'start_date'          =>  'nullable', 
+                'due_date'            =>  'nullable'
             ]);
             if($validator->fails()){
                 $error = $validator->errors()->all()[0];
@@ -125,10 +126,10 @@ class MilestoneController extends Controller
             } else {
                 $milestone = Milestone::findOrFail($id);
 
-                $milestone->title = $request->title;
+                $milestone->name = $request->name;
                 $milestone->description = $request->description;
-                $milestone->start_date = $request->start_date;
-                if($request->due_date) $milestone->due_date = $request->due_date;
+                $milestone->start_date = $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d');
+                $milestone->due_date = $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d');
 
                 $milestone->update();
 

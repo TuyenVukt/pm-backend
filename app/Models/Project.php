@@ -15,6 +15,7 @@ class Project extends Model
         'project_key',
         'description',       
         'start_date',  
+        'due_date', 
         'workspace_id',  
     ];
 

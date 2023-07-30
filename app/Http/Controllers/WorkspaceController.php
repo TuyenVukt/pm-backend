@@ -30,8 +30,7 @@ class WorkspaceController extends Controller
         $data = $request->validate([
             'name'          =>      'required|string|unique:workspaces,name,except,id',
             'organization'  =>      'required|string',
-            'domain'        =>      'required|string',
-            'secret_code'   =>      'required|string' 
+            'domain'        =>      'required|string'
         ]);
 
         $key = $data['domain'] . $data['secret_code'];
@@ -143,6 +142,19 @@ class WorkspaceController extends Controller
             if($workspace && $workspace->projects) 
                 return response()->json(['status'=>'true', 'message'=>'Projects of Workspace', 'data'=>$workspace->projects]);
                 return response()->json(['status'=>'true', 'message'=>'Projects of Workspace', 'data'=>[]]);
+        } else 
+            return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
+    }
+
+    public function getMembersByWorkspace(Request $request, $id)
+    {
+        
+        if($request->user()->workspace_id == $id){
+            $workspace = Workspace::findOrFail($id);
+            // return  $workspace;
+            if($workspace && $workspace->members) 
+                return response()->json(['status'=>'true', 'message'=>'Members of Workspace', 'data'=>$workspace->members]);
+                return response()->json(['status'=>'true', 'message'=>'Members of Workspace', 'data'=>[]]);
         } else 
             return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
     }

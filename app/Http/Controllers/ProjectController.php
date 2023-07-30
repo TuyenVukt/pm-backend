@@ -30,8 +30,8 @@ class ProjectController extends Controller
     public function create(Request $request)
     {
             $validator = Validator::make($request->all(), [
-                'name'                =>  'required|string|unique:projects,name,except,id',
-                'project_key'         =>  'required',
+                'name'                =>  'required|string|unique:projects,name',
+                'project_key'         =>  'required|string|unique:projects,project_key',
                 'description'         =>  'required',   
             ]);
 
@@ -44,7 +44,8 @@ class ProjectController extends Controller
                         'name'            =>  $request->name,
                         'project_key'     =>  $request->project_key,
                         'description'     =>  $request->description,
-                        'start_date'      =>  $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d H:i:s'),
+                        'start_date'      =>  $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d'),
+                        'due_date'        =>  $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d'),
                         'workspace_id'    =>  $request->user()->workspace_id
                     ]);
                     
@@ -107,8 +108,8 @@ class ProjectController extends Controller
             $validator = Validator::make($request->all(), [
                 'name'                =>  'required|string',
                 'description'         =>   'required',  
-                'start_date'          =>  'required|date_format:Y-m-d', 
-                'due_date'            =>  'nullable|date_format:Y-m-d'
+                'start_date'          =>  'required', 
+                'due_date'            =>  'nullable'
             ]);
 
             if($validator->fails()){
@@ -201,7 +202,7 @@ class ProjectController extends Controller
             // return $user->projects;
 
         } catch (\Exception $e){
-            return response()->json(['status'=>'false', 'message'=>'Can not add member to project!', 'data'=>[]], 500);
+            return response()->json(['status'=>'false', 'message'=>$e, 'data'=>[]], 500);
         }
         
     }

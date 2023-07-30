@@ -12,9 +12,7 @@ class Workspace extends Model
     protected $fillable = [
         'name',          
         'organization_name',
-        'domain',       
-        'secret_code',  
-        'secret_key',  
+        'domain', 
         'description',  
         'workspace_admin_id'   
     ];
@@ -25,7 +23,7 @@ class Workspace extends Model
         return $this->hasMany(Project::class);
     }
 
-    public function users(){
+    public function members(){
         return $this->hasMany(User::class);
     }
 
