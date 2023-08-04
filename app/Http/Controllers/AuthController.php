@@ -29,7 +29,7 @@ class AuthController extends Controller
         $res = [
             'user' => $user,
             'token' => $token,
-            'message' => 'Account created successfully!'
+            'message' => 'Logged in successfully!'
         ];
 
         return response($res, 201);

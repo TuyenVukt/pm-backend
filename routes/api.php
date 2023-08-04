@@ -9,6 +9,7 @@ use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\CommentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -59,12 +60,17 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/task', [TaskController::class, 'store']);
     Route::post('/task/{id}', [TaskController::class, 'update']);
     // Route::get('/task/{id}', [TaskController::class, 'findById']);
-    Route::get('/task/{id}', [TaskController::class, 'getParentTaskWithSubTasks']);
+    Route::get('/task/{id}', [TaskController::class, 'findById']);
     Route::get('/tasks-by-project/{project_id}', [TaskController::class, 'getTasksWithSubTasksInProject']);
     //tạo task cho Task
     Route::get('/sub_task_by_task/{id}', [TaskController::class, 'getSubTaskByTask']);
 
-    //
+    //Comment
+    Route::post('/comment', [CommentController::class, 'createComment']);
+    Route::get('/comment/{id}', [ CommentController::class, 'show']);
+    Route::get('/get-comments-by-task/{id}', [ CommentController::class, 'getCommentsByTask']);
+    Route::post('/comment/{id}', [CommentController::class, 'editComment']);
+
 
 
 

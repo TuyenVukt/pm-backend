@@ -28,12 +28,6 @@ class Task extends Model
         'priority',
         // 'is_parent',
         // 'is_child'//
-
-
-
-
-
-
     ];
     
     public function milestone()
@@ -44,6 +38,10 @@ class Task extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function assignee(){
+        return $this->belongsTo(User::class, 'assignee_id', 'id');
     }
 
     public function subTasks()
