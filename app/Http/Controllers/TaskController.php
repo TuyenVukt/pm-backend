@@ -127,7 +127,7 @@ class TaskController extends Controller
                     'description'           =>  'required',   
                     'start_time'            =>  'nullable',
                     'end_time'              =>  'nullable',
-                    'project_id'            =>  'required',
+                    // 'project_id'            =>  'required',
                     'milestone_id'          =>  'nullable',
                     'status'                =>  'required',
                     'priority'              =>  'required',
@@ -144,7 +144,7 @@ class TaskController extends Controller
                     $issue->milestone_id = $request->milestone_id;
                     $issue->status = $request->status;
                     $issue->priority = $request->priority;
-                    if($request->start_time) $issue->start_time = $request->start_date;
+                    if($request->start_time) $issue->start_time = $request->start_time;
                     if($request->end_time) $issue->end_time = $request->end_time;
                     //check có thuộc project không?
 
