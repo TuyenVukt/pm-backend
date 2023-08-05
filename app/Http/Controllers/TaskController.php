@@ -90,22 +90,25 @@ class TaskController extends Controller
         ]);
     }
 
-    public function show(Request $request)
+    public function show(Request $request, $project_id)
     {
         $key = $request->input('key');
-        $milestone = $request->input('milestone');
+        $milestone_id = $request->input('milestone_id');
         $status = $request->input('status');
         $assignee = $request->input('assignee');
+        $is_all = $request->input('is_all');
 
         $tasks = Task::query();
 
         // Thêm các điều kiện tìm kiếm vào query nếu có
-        if ($name) {
-            $tasks->where('name', 'like', '%' . $name . '%');
+        $tasks->where('project_id', $project_id);
+
+        if ($key) {
+            $tasks->where('name', 'like', '%' . $key . '%');
         }
 
-        if ($milestone) {
-            $tasks->where('milestone', 'like', '%' . $milestone . '%');
+        if ($milestone_id) {
+            $tasks->where('milestone_id', $milestone_id);
         }
 
         if ($status) {
@@ -115,11 +118,17 @@ class TaskController extends Controller
         if ($assignee) {
             $tasks->where('assignee', $assignee);
         }
+        //is_all = true => lấy tất cả các task, không bao gồm task con
+        //is_all = false => lấy các task cha mà thôi.
+        //mặc định thì chỉ lấy các task cha
+        if(!$is_all) {
+            $tasks->where('is_child', false);
+        }
 
         // Lấy danh sách các task đã tìm thấy
-        $tasks = $tasks->get();
+        $tasks = $tasks->with('subTasks', 'assignee:id,name,avatar')->get();
 
-        return response()->json(['tasks' => $tasks], 200);
+        return $this->jsonResponse('true', '!', $tasks);
     }
 
     public function findById($key)

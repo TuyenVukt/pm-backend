@@ -39,6 +39,7 @@ class CommentController extends Controller
                 $comment->content = $request->content;
                 $comment->updated_at = $timestamp = Carbon::now();
             }
+            $comment->save();
             return $this->jsonResponse('true', 'Comment edited Successfully!', $comment);
         }
 
