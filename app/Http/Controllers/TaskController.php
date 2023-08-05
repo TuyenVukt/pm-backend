@@ -95,7 +95,7 @@ class TaskController extends Controller
         $key = $request->input('key');
         $milestone_id = $request->input('milestone_id');
         $status = $request->input('status');
-        $assignee = $request->input('assignee');
+        $assignee_id = $request->input('assignee_id');
         $is_all = $request->input('is_all');
 
         $tasks = Task::query();
@@ -115,8 +115,8 @@ class TaskController extends Controller
             $tasks->where('status', $status);
         }
 
-        if ($assignee) {
-            $tasks->where('assignee', $assignee);
+        if ($assignee_id) {
+            $tasks->where('assignee_id', $assignee);
         }
         //is_all = true => lấy tất cả các task, không bao gồm task con
         //is_all = false => lấy các task cha mà thôi.
