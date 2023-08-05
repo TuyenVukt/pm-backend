@@ -51,7 +51,7 @@ class CommentController extends Controller
 
     public function getCommentsByTask(Request $request, $id){
         // $perPage = $request->input('per_page', 10);
-        $comments = Comment::where('task_id', $id)->paginate(5);
+        $comments = Comment::where('task_id', $id)->orderByDesc('id')->paginate(5);
         // $comments = Comment::where('task_id', $id)->get();
         $data = [
             'current_page' => $comments->currentPage(),
