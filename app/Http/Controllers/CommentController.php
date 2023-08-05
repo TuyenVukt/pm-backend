@@ -62,7 +62,13 @@ class CommentController extends Controller
         ];
 
         return $this->jsonResponse('true', 'Comments of Task!', $data);
+    }
 
+    public function destroy($id){
+        $comment = Comment::findOrFail($id);
+        $comment->delete();
+
+        return response()->json(['message' => 'Comment deleted successfully'], 200);
     }
 
     

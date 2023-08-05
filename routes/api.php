@@ -67,6 +67,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     //Comment
     Route::post('/comment', [CommentController::class, 'createComment']);
     Route::get('/comment/{id}', [ CommentController::class, 'show']);
+    Route::delete('/comment/{id}', [ CommentController::class, 'destroy']);
     Route::get('/get-comments-by-task/{id}', [ CommentController::class, 'getCommentsByTask']);
     Route::post('/comment/{id}', [CommentController::class, 'editComment']);
 
