@@ -116,7 +116,7 @@ class TaskController extends Controller
         }
 
         if ($assignee_id) {
-            $tasks->where('assignee_id', $assignee);
+            $tasks->where('assignee_id', $assignee_id);
         }
         //is_all = true => lấy tất cả các task, không bao gồm task con
         //is_all = false => lấy các task cha mà thôi.
