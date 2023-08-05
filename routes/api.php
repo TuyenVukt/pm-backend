@@ -61,7 +61,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/task/{id}', [TaskController::class, 'update']);
     // Route::get('/task/{id}', [TaskController::class, 'findById']);
     Route::get('/task/{id}', [TaskController::class, 'findById']);
-    Route::get('/get-task/{project_id}', [TaskController::class, 'show']);
+    Route::get('/get-tasks/{project_id}', [TaskController::class, 'show']);
     Route::get('/tasks-by-project/{project_id}', [TaskController::class, 'getTasksWithSubTasksInProject']);
     Route::get('/sub_task_by_task/{id}', [TaskController::class, 'getSubTaskByTask']);
 
