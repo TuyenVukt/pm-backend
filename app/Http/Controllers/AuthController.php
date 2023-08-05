@@ -60,7 +60,7 @@ class AuthController extends Controller
 
         // Store the token in the users table
         $user->forceFill([
-            'verification_token' => $token,
+            'remember_token' => $token,
         ])->save();
         
         $redirectUrl = 'http://127.0.0.1:8001/';

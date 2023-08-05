@@ -33,13 +33,13 @@ class EmailVerificationController extends Controller
         // Check if the user exists
         if ($user) {
             // Check if the verification token matches
-            if (hash_equals($user->verification_token, $token)) {
+            if (hash_equals($user->remember_token, $token)) {
                 $user->markEmailAsVerified();
-                $user->verification_token = null;
+                $user->remember_token = null;
                 $user->is_active = true;
                 $user->save();
     
-                return redirect('http://127.0.0.1:8001/');
+                return redirect('http://127.0.0.1:8000/');
             }
         }
     

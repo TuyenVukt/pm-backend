@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Task;
+use App\Models\User;
 use App\Models\Project;
 
 
@@ -137,7 +138,7 @@ class TaskController extends Controller
                 $error = $validator->errors()->all()[0];
                 return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
             } else {
-                $issue = Task::find($id);
+                $issue = Task::with('subTasks', 'assignee:id,name,avatar')->find($id);
                 if($issue){
                     $issue->name = $request->name;
                     $issue->description = $request->description;
@@ -148,10 +149,15 @@ class TaskController extends Controller
                     if($request->end_time) $issue->end_time = $request->end_time;
                     //check có thuộc project không?
 
-                    if($request->assignee_id) $issue->assignee_id = $request->assignee_id;
+                    if($request->assignee_id && $request->assignee_id !== $issue->assignee_id) {
+                        $issue->assignee_id = $request->assignee_id;
+                        $assignee = User::findOrFail($request->assignee_id);
+                    }
                     if($request->estimate_time) $issue->estimate_time = $request->estimate_time;
-
                     $issue->update();
+                    // if($request->assignee_id && $request->assignee_id != $issue->assignee_id)  $issue->refresh();
+                    $issue = Task::with('subTasks', 'assignee:id,name,avatar')->find($id);
+                    
                     return $this->jsonResponse('true', 'Task Updated Successfully!', $issue);
                 }
                     return response()->json(['status'=>'false', 'message'=>'Task not found!', 'data'=>[]], 404);
