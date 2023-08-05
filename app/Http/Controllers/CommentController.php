@@ -56,10 +56,11 @@ class CommentController extends Controller
         $data = [
             'current_page' => $comments->currentPage(),
             'data' => $comments->items(),
-            'next_page_url' => $comments->nextPageUrl(),
             'per_page' => 5,
             'total' => $comments->total(),
+            'current_page_url' => $comments->url($comments->currentPage())
         ];
+
         return $this->jsonResponse('true', 'Comments of Task!', $data);
 
     }

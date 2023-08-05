@@ -87,7 +87,6 @@ class TaskController extends Controller
         return response()->json([
             'status' => 'true',
             'message' => 'Tasks with SubTasks in Project retrieved successfully',
-            'code_bug' => 200,
             'data' => $tasks,
         ]);
     }
