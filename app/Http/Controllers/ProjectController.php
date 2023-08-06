@@ -30,8 +30,8 @@ class ProjectController extends Controller
     public function create(Request $request)
     {
             $validator = Validator::make($request->all(), [
-                'name'                =>  'required|string|unique:projects,name',
-                'project_key'         =>  'required|string|unique:projects,project_key',
+                'name'                =>  'required|string',
+                'project_key'         =>  'required|string',
                 'description'         =>  'required',   
             ]);
 
@@ -48,6 +48,8 @@ class ProjectController extends Controller
                         'due_date'        =>  $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d'),
                         'workspace_id'    =>  $request->user()->workspace_id
                     ]);
+
+                    $project->users()->attach($request->user());
                     
                     return response()->json(['status'=>'true', 'message'=>'Project Created!', 'data'=>$project]);
                 } else

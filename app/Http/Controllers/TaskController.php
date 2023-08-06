@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Project;
+use App\Models\Notification;
 
 
 class TaskController extends Controller
@@ -48,7 +49,10 @@ class TaskController extends Controller
 
             if($request->start_time) $issue->start_time = $request->start_time;
             if($request->end_time) $issue->end_time = $request->end_time;
-            if($request->assignee_id) $issue->assignee_id = $request->assignee_id;
+            if($request->assignee_id) {
+                $issue->assignee_id = $request->assignee_id;
+
+            }
                 else $issue->assignee_id = $request->user()->id;
             $issue->task_key = $task_key .'-'. $issue->id;
             if($request->is_child && $request->parent_task_id){
@@ -96,14 +100,13 @@ class TaskController extends Controller
         $milestone_id = $request->input('milestone_id');
         $status = $request->input('status');
         $assignee_id = $request->input('assignee_id');
-        $is_all = $request->input('is_all');
 
         $tasks = Task::query();
 
         // Thêm các điều kiện tìm kiếm vào query nếu có
         $tasks->where('project_id', $project_id);
 
-        if ($key) {
+        if ($key && !empty(trim($key))) {
             $tasks->where('name', 'like', '%' . $key . '%');
         }
 
@@ -118,17 +121,11 @@ class TaskController extends Controller
         if ($assignee_id) {
             $tasks->where('assignee_id', $assignee_id);
         }
-        //is_all = true => lấy tất cả các task, không bao gồm task con
-        //is_all = false => lấy các task cha mà thôi.
-        //mặc định thì chỉ lấy các task cha
-        if(!$is_all) {
-            $tasks->where('is_child', false);
-        }
 
-        // Lấy danh sách các task đã tìm thấy
-        $tasks = $tasks->with('subTasks', 'assignee:id,name,avatar')->get();
 
-        return $this->jsonResponse('true', '!', $tasks);
+        $data = $tasks->with('subTasks', 'assignee:id,name,avatar')->get();
+
+        return $this->jsonResponse('true', '!', $data);
     }
 
     public function findById($key)

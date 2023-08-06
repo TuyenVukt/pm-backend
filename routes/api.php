@@ -10,6 +10,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FileController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -76,6 +77,8 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
 
 });
+
+Route::post('/upload', [FileController::class, 'upload']);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');

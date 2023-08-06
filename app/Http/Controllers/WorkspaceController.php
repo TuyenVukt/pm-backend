@@ -148,15 +148,30 @@ class WorkspaceController extends Controller
 
     public function getMembersByWorkspace(Request $request, $id)
     {
-        
+
         if($request->user()->workspace_id == $id){
-            $workspace = Workspace::findOrFail($id);
-            // return  $workspace;
-            if($workspace && $workspace->members) 
-                return response()->json(['status'=>'true', 'message'=>'Members of Workspace', 'data'=>$workspace->members]);
-                return response()->json(['status'=>'true', 'message'=>'Members of Workspace', 'data'=>[]]);
+            $key = $request->input('key');
+            $role = $request->input('role');
+
+            $listMembers = User::query()
+            ->when($id, function ($query, $id) {
+                return $query->where('workspace_id', $id);
+            })
+            ->when($key, function ($query, $key) {
+                return $query->where(function ($query) use ($key) {
+                    $query->where('name', 'like', "%$key%")
+                        ->orWhere('email', 'like', "%$key%");
+                });
+            })
+            ->when($role, function ($query, $role) {
+                return $query->where('role', $role);
+            })
+            ->get();
+
+            return $this->jsonResponse('true', 'Members of Workspace!', $listMembers);
         } else 
-            return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
+        return $this->jsonResponse('false', 'Forbidden', [], 403);
+
     }
 
 

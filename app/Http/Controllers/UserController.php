@@ -124,13 +124,6 @@ class UserController extends Controller
         
     }
 
-    // public function deleteImg (Request $request){
-    //     if(Storage::delete('public/images/avatars/1689678567.jpg')){
-    //         return 'OK';
-    //     };
-    //     return 'Not OK';
-    // }
-
     public function showAvatar($id)
     {
 

@@ -39,7 +39,7 @@ class EmailVerificationController extends Controller
                 $user->is_active = true;
                 $user->save();
     
-                return redirect('http://127.0.0.1:8000/');
+                return redirect('http://localhost:3000/sign-in');
             }
         }
     

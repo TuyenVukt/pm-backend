@@ -41,7 +41,7 @@ class MilestoneController extends Controller
     {  
         //ai có quyền tạo
         $validator = Validator::make($request->all(), [
-            'name'                =>  'required|string|unique:milestones,name,except,id',
+            'name'                =>  'required|string',
             'description'          =>  'nullable',   
             'start_date'           =>  'nullable', 
             'due_date'             =>  'nullable',
