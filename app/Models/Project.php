@@ -21,7 +21,7 @@ class Project extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'user_project');
+        return $this->belongsToMany(User::class, 'user_project', 'project_id', 'user_id');
     }
 
     public function milestones(){

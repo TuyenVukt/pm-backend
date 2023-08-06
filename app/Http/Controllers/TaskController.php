@@ -34,9 +34,9 @@ class TaskController extends Controller
             $error = $validator->errors()->all()[0];
             return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
         } else {
-
             $project = Project::find($request->project_id);
             $task_key = $project->project_key;
+            $taskCount = Task::where('project_id', $request->project_id)->count() + 1;
             $issue = Task::create([
                 'name'                  =>  $request->name,
                 'description'           =>  $request->description,   
@@ -54,7 +54,7 @@ class TaskController extends Controller
 
             }
                 else $issue->assignee_id = $request->user()->id;
-            $issue->task_key = $task_key .'-'. $issue->id;
+            $issue->task_key = $task_key .'-'. $taskCount;
             if($request->is_child && $request->parent_task_id){
                 $issue->is_child = true;
                 $issue->parent_task_id = $request->parent_task_id;
@@ -197,4 +197,6 @@ class TaskController extends Controller
     {
         //
     }
+
+
 }

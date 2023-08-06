@@ -12,21 +12,6 @@ use Illuminate\Support\Carbon;
 
 class ProjectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create(Request $request)
     {
             $validator = Validator::make($request->all(), [
@@ -214,5 +199,27 @@ class ProjectController extends Controller
         $project = Project::findOrFail($id);
         return $project->users;
 
+    }
+
+    public function getProjectsByUserId(Request $request){
+        $key = $request->input('key');
+            $user = User::findOrFail($request->user()->id);
+            if(!empty(trim($key))) $projects = $user->projects()->where('name', 'LIKE', "%$key%")->get();
+            else $projects = $user->projects;
+            return $this->jsonResponse('true', 'List Projects By User!',$projects);
+    }
+
+    public function getUsersNotInProject(Request $request, $project_id)
+    {
+        $project = Project::findOrFail($project_id);
+        $allUsers = User::where('workspace_id', $request->user()->workspace_id)->get();
+
+
+        // Lấy danh sách các user đang thuộc về project
+        $usersInProject = $project->users;
+        // Lọc các user không thuộc về project
+        $usersNotInProject = $allUsers->diff($usersInProject);
+
+        return $this->jsonResponse('true', 'List Projects By User!',$usersNotInProject);
     }
 }

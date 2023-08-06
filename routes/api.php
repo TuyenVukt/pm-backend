@@ -51,6 +51,8 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/project/{id}', [ProjectController::class, 'show']);
     Route::post('/project/{id}', [ProjectController::class, 'update']);
     Route::get('/members_of_project/{id}', [ProjectController::class, 'getAllMembersOfProject']);
+    Route::get('/members-not-in-project/{project_id}', [ProjectController::class, 'getUsersNotInProject']);
+    Route::get('/projects-by-user', [ProjectController::class, 'getProjectsByUserId']);
     //milestone
     Route::post('/milestone', [MilestoneController::class, 'store']);
     Route::get('/milestone/{id}', [MilestoneController::class, 'show']);
