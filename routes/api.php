@@ -10,7 +10,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CommentController;
-use App\Http\Controllers\FileController;
+use App\Http\Controllers\DocumentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -75,7 +75,11 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/get-comments-by-task/{id}', [ CommentController::class, 'getCommentsByTask']);
     Route::post('/comment/{id}', [CommentController::class, 'editComment']);
 
-
+    //document
+    Route::post('/document', [DocumentController::class, 'create']);
+    Route::post('/document/{id}', [DocumentController::class, 'update']);
+    Route::get('/document/{doc_id}', [DocumentController::class, 'get']);
+    Route::get('/documents_by_project/{project_id}', [DocumentController::class, 'getFilesByProject']);
 
 
 });

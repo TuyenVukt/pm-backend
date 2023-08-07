@@ -95,7 +95,7 @@ class WorkspaceController extends Controller
         if($request->user()->workspace_id == $id){
 
             $validator = Validator::make($request->all(), [
-                'name'                =>  'required|string|unique:workspaces,name,except,id',
+                'name'                =>  'required|string',
                 'organization_name'   =>  'required',
                 'domain'              =>  'required|string',
                 'description'         =>   'required',   
