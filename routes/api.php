@@ -77,6 +77,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     //document
     Route::post('/document', [DocumentController::class, 'create']);
+    Route::delete('/document', [DocumentController::class, 'destroy']);
     Route::post('/document/{id}', [DocumentController::class, 'update']);
     Route::get('/document/{doc_id}', [DocumentController::class, 'get']);
     Route::get('/documents_by_project/{project_id}', [DocumentController::class, 'getFilesByProject']);

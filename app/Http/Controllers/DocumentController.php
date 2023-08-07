@@ -74,7 +74,10 @@ class DocumentController extends Controller
     }
 
     public function destroy (Request $request){
-        
+        $ids = $request->ids;
+        $project_id = $request->project_id;
+        Document::where('project_id', $project_id)->whereIn('id', $ids)->delete();
+        return $this->jsonResponse(true, 'Delete successfully!', []);
     }
 
 }
