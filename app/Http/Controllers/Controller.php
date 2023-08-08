@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
+use App\Models\Notification;
 
 class Controller extends BaseController
 {
@@ -46,6 +47,38 @@ class Controller extends BaseController
             'message' => $message,
             'data' => $data,
         ], $status_code);
+    }
+
+    protected function makeNotification($user_id, $key, $type): bool
+    {
+        if($type === 1){
+            $content = "Task: ".$key.". You have been assigned a task";
+            $noti = Notification::create([
+                'content'           => $content,
+                'user_id'           => $user_id,
+            ]);
+            if($noti) return true;
+        } else if($type === 2){
+            $content = "Task: ".$key.". The task you were assigned has been edited";
+            $noti = Notification::create([
+                'content'           => $content,
+                'user_id'           => $user_id,
+            ]);
+
+            if($noti) return true;
+        }  else if($type === 3){
+            $content = "Task: ".$key.". The task you were assigned had a comment";
+            $noti = Notification::create([
+                'content'           => $content,
+                'user_id'           => $user_id,
+            ]);
+            
+            if($noti) return true;
+        }
+
+        return false;
+
+
     }
 
     // protected function checkPermission(Request $request)

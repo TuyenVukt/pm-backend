@@ -20,7 +20,7 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'                  =>  'required|string|unique:tasks,name',
+            'name'                  =>  'required|string',
             'description'           =>  'required',   
             'start_time'            =>  'nullable',
             'end_time'              =>  'nullable',
@@ -50,8 +50,7 @@ class TaskController extends Controller
             if($request->start_time) $issue->start_time = $request->start_time;
             if($request->end_time) $issue->end_time = $request->end_time;
             if($request->assignee_id) {
-                $issue->assignee_id = $request->assignee_id;
-
+                $issue->assignee_id = $request->assignee_id;     
             }
                 else $issue->assignee_id = $request->user()->id;
             $issue->task_key = $task_key .'-'. $taskCount;
@@ -63,6 +62,11 @@ class TaskController extends Controller
                 $parentTask->subTasks()->save($issue);
             }
             $issue->save();
+
+            if($issue->assignee_id) {
+                $this->makeNotification($issue->assignee_id, $issue->task_key, 1);
+            }
+
             return response()->json(['status'=>'true', 'message'=>'Task Created!', 'data'=>$issue]);
 
         }
@@ -178,13 +182,17 @@ class TaskController extends Controller
 
                     if($request->assignee_id && $request->assignee_id !== $issue->assignee_id) {
                         $issue->assignee_id = $request->assignee_id;
-                        $assignee = User::findOrFail($request->assignee_id);
+                            $this->makeNotification($issue->assignee_id, $issue->task_key, 1);
                     }
                     if($request->estimate_time) $issue->estimate_time = $request->estimate_time;
                     $issue->update();
                     // if($request->assignee_id && $request->assignee_id != $issue->assignee_id)  $issue->refresh();
                     $issue = Task::with('subTasks', 'assignee:id,name,avatar')->find($id);
-                    
+                    // notify to assignee
+                    if($request->notity_assignee && $issue->assignee_id){
+                        $this->makeNotification($issue->assignee_id, $issue->task_key, 2);
+                    }
+
                     return $this->jsonResponse('true', 'Task Updated Successfully!', $issue);
                 }
                     return response()->json(['status'=>'false', 'message'=>'Task not found!', 'data'=>[]], 404);
@@ -197,6 +205,7 @@ class TaskController extends Controller
     {
         //
     }
+
 
 
 }

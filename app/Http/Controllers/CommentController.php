@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Comment;
+use App\Models\Task;
 use Carbon\Carbon;
 class CommentController extends Controller
 {
@@ -21,6 +22,12 @@ class CommentController extends Controller
                 'task_id'           =>$request->task_id,
                 'type'              =>"NORMAL",
             ]);
+
+            if($request->notity_assignee){
+                $task = Task::find($request->task_id);
+                if($task && $task->assignee_id) 
+                    $this->makeNotification($task->assignee_id, $task->task_key, 3);
+            }
 
             return $this->jsonResponse('true', 'Comment created Successfully!', $comment);
         }

@@ -11,6 +11,7 @@ use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\NotificationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -82,6 +83,11 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/document/{doc_id}', [DocumentController::class, 'get']);
     Route::get('/documents_by_project/{project_id}', [DocumentController::class, 'getFilesByProject']);
 
+    //noti
+    Route::get('/notifications/{user_id}', [NotificationController::class, 'getNotiByUser']);
+    Route::get('/count_noti', [NotificationController::class, 'countUnreadNotiByUser']);
+    Route::post('/read_noti/{id}', [NotificationController::class, 'readNotification']);
+    
 
 });
 
