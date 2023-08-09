@@ -75,6 +75,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::delete('/comment/{id}', [ CommentController::class, 'destroy']);
     Route::get('/get-comments-by-task/{id}', [ CommentController::class, 'getCommentsByTask']);
     Route::post('/comment/{id}', [CommentController::class, 'editComment']);
+    Route::get('update_in_project/{project_id}', [CommentController::class, 'getCommentsByProject']);
 
     //document
     Route::post('/document', [DocumentController::class, 'create']);
@@ -87,7 +88,9 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/notifications/{user_id}', [NotificationController::class, 'getNotiByUser']);
     Route::get('/count_noti', [NotificationController::class, 'countUnreadNotiByUser']);
     Route::post('/read_noti/{id}', [NotificationController::class, 'readNotification']);
-    
+    //
+
+    Route::get('/check-user/{project_id}', [ProjectController::class, 'checkUser']);
 
 });
 

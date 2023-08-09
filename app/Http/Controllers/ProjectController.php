@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 
 class ProjectController extends Controller
 {
+    //create a project 
     public function create(Request $request)
     {
             $validator = Validator::make($request->all(), [
@@ -24,7 +25,7 @@ class ProjectController extends Controller
                 $error = $validator->errors()->all()[0];
                 return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
             } else {
-                if(($request->user()->role === UserRole::WORKSPACE_ADMIN || $request->user()->role === UserRole::PM)){
+                if(($request->user()->role === UserRole::WORKSPACE_ADMIN)){
                     $project = Project::create([
                         'name'            =>  $request->name,
                         'project_key'     =>  $request->project_key,
@@ -33,7 +34,6 @@ class ProjectController extends Controller
                         'due_date'        =>  $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d'),
                         'workspace_id'    =>  $request->user()->workspace_id
                     ]);
-
                     $project->users()->attach($request->user());
                     
                     return response()->json(['status'=>'true', 'message'=>'Project Created!', 'data'=>$project]);
@@ -43,41 +43,12 @@ class ProjectController extends Controller
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //kiem tra xem 
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //kiem tra xem user co la workspace_admin, pm hay member, tuc la kiem tra user có thuộc project hay không
+        
         $project = Project::findOrFail($id);
         return response()->json(['status'=>'true', 'message'=>'Details of Project', 'data'=>$project]);
-
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -90,6 +61,7 @@ class ProjectController extends Controller
     public function update(Request $request, $id)
     {
         //Check quyền: Workspace_admin hoặc PM và phải thuộc Project đó. 
+
         if(1){ 
 
             $validator = Validator::make($request->all(), [
@@ -131,17 +103,6 @@ class ProjectController extends Controller
             
             return response()->json(['status'=>'true', 'message'=>'Workspace Edited!', 'data'=>$workspace]);
         } else return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 
     public function addMemberToProject(Request $request){
@@ -221,5 +182,9 @@ class ProjectController extends Controller
         $usersNotInProject = $allUsers->diff($usersInProject);
 
         return $this->jsonResponse('true', 'List Projects By User!',$usersNotInProject);
+    }
+
+    public function checkUser(Request $request, $project_id){
+        return $this->checkInsideProject($request, $project_id);
     }
 }

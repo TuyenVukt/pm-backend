@@ -12,20 +12,15 @@ class UserController extends Controller
 {
     private const DEFAULT_AVATAR = 'public/images/avatars/default.jpg';
 
-    public function getAllUserInWorkspace(Request $request)
-    {
-        //check nếu $request->secret_code = workspace_code thì tiếp tục.
-        return User::select('id', 'name', 'email', 'avatar', 'is_active', 'role', 'created_at', 'updated_at')
-            ->where('workspace_id', '=', $request->input('id'))
-            ->orderBy('created_at', 'desc')
-            ->paginate(10, ['*'], 'page', $request->input('page'));
+    // public function getAllUserInWorkspace(Request $request)
+    // {
+    //     //check nếu $request->secret_code = workspace_code thì tiếp tục.
+    //     return User::select('id', 'name', 'email', 'avatar', 'is_active', 'role', 'created_at', 'updated_at')
+    //         ->where('workspace_id', '=', $request->input('id'))
+    //         ->orderBy('created_at', 'desc')
+    //         ->paginate(10, ['*'], 'page', $request->input('page'));
 
-    }
-
-    public function getAllUserInProject(Request $request, $id)
-    {
-
-    }
+    // }
 
     public function getProfile(Request $request){
         try{
@@ -39,17 +34,13 @@ class UserController extends Controller
 
     public function getMemberById(Request $request, $id){
         try{
-            // $user_id = $request->user()->id;
             $data  = User::find($id);
             if($request->user()->workspace_id == $data->workspace_id) 
-                return response()->json(['status'=>'true', 'message'=>"Profile gotten successfully  ", 'data'=>$data]);
-            
+                return response()->json(['status'=>'true', 'message'=>"Profile gotten successfully  ", 'data'=>$data]); 
         } catch (\Exception $e){
             return response()->json(['status'=>'false', 'message'=>$e->getMessage(), 'data'=>[]], 500);
         }
     }
-
-
 
     public function updateProfile(Request $request)
     {
@@ -114,7 +105,6 @@ class UserController extends Controller
 
                 if($request->user()->role !== UserRole::WORKSPACE_ADMIN || $request->user()->workspace_id = $user->workspace_id) return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
                 if(is_null($user)) return response()->json(['status'=>'false', 'message'=>'Member not found!', 'data'=>[]], 404);
-
                 }
 
             }
@@ -142,8 +132,5 @@ class UserController extends Controller
         
     }
 
-    public function getMembersOfWorkspace($id){
-
-        
-    }
+    
 }

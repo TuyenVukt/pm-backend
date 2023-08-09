@@ -9,7 +9,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use App\Models\Notification;
-
+use Illuminate\Http\Request;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
@@ -78,11 +78,31 @@ class Controller extends BaseController
 
         return false;
 
+    }
+
+    
+
+    protected function checkInsideProject(Request $request, $project_id): bool {
+        $projects = $request->user()->projects;
+        $foundProject = collect($projects)->firstWhere('id', $project_id);
+        if($foundProject) return true;
+        return false;
+    }
+    
+    protected function autoMakeComment(Resquest $request, $type){
+        //type == 1 => tạp task
+        if($type === 1){
+            $content = "added a new Task";
+            $comment = Comment::create([
+                'content'           =>$content,
+                'created_by'        =>$request->user()->id,
+                'task_id'           =>$task_id,
+                'type'              =>"ADD",
+            ]);
+        } 
 
     }
 
-    // protected function checkPermission(Request $request)
-    // protected function checkInsideWorkspace(Resquest $request);
     // protected function checkInsideProject(Resquest $request);
     // protected function getROLE(Resquest $request);
     

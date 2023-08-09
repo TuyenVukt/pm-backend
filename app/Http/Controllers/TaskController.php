@@ -189,9 +189,7 @@ class TaskController extends Controller
                     // if($request->assignee_id && $request->assignee_id != $issue->assignee_id)  $issue->refresh();
                     $issue = Task::with('subTasks', 'assignee:id,name,avatar')->find($id);
                     // notify to assignee
-                    if($request->notity_assignee && $issue->assignee_id){
-                        $this->makeNotification($issue->assignee_id, $issue->task_key, 2);
-                    }
+                    $this->makeNotification($issue->assignee_id, $issue->task_key, 2);
 
                     return $this->jsonResponse('true', 'Task Updated Successfully!', $issue);
                 }

@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
 use App\Enums\UserRole;
 
-
 class DocumentController extends Controller
 {
     public function create (Request $request){

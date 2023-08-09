@@ -79,5 +79,20 @@ class CommentController extends Controller
         return response()->json(['message' => 'Comment deleted successfully'], 200);
     }
 
+    public function getCommentsByProject($project_id)
+    {
+        $comments = Comment::with(['task:id,task_key,name', 'creator:id,name,avatar'])
+            ->whereHas('task', function ($query) use ($project_id) {
+                $query->where('project_id', $project_id);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+            return $this->jsonResponse(true, 'Get all Update!', $comments);
+
+    }
+
+    
+
     
 }

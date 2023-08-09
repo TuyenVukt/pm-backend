@@ -9,33 +9,13 @@ use Illuminate\Support\Facades\Validator;
 
 class WorkspaceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create(Request $request)
     {
-        //name, organization, avatar, domain, secret_code
         $data = $request->validate([
             'name'          =>      'required|string|unique:workspaces,name,except,id',
             'organization'  =>      'required|string',
             'domain'        =>      'required|string'
         ]);
-
-        $key = $data['domain'] . $data['secret_code'];
-        $secret_key = bcrypt($key);
-
 
         $workspace = Workspace::create([
             'name'          =>          $data['name'],
@@ -47,8 +27,6 @@ class WorkspaceController extends Controller
             'workspace_admin_id'    =>  $request->user()->id   
         ]);
 
-        // $workspace->makeHidden(['secret_code', 'secret_key', 'workspace_admin_id']);
-
         $admin = User::find($request->user()->id);
         $admin->workspace_id = $workspace->id;
         $admin->save();
@@ -56,58 +34,33 @@ class WorkspaceController extends Controller
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    //Get details of a workspace
     public function show(Request $request, $id)
     {
         if($request->user()->workspace_id == $id){
             $data = Workspace::find($id);
-            // $data->makeHidden(['secret_code', 'secret_key', 'workspace_admin_id']);
-            // $user = User::select('id', 'name')->where('role', '=', 2)->get();
-            return response()->json(['status'=>'true', 'message'=>'Details of Workspace', 'data'=>$data]);
-        } else return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
-
+            return $this->jsonResponse(true, "Details of Workspace!", $data);
+        } else 
+            return $this->jsonResponse(false, "Forbidden", [], 403);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Request $request, $id)
     {
-        if($request->user()->workspace_id == $id){
-
+        if($request->user()->workspace_id == $id && $request->user()->Role ==  UserRole::WORKSPACE_ADMIN){
             $validator = Validator::make($request->all(), [
                 'name'                =>  'required|string',
                 'organization_name'   =>  'required',
                 'domain'              =>  'required|string',
-                'description'         =>   'required',   
+                'description'         =>  'required',   
             ]);
 
             if($validator->fails()){
                 $error = $validator->errors()->all()[0];
-                return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
+                return $this->jsonResponse(false, $error, [], 422);
             } else {
                 $workspace = Workspace::find($id);
 
-                if($request->user()->role === UserRole::WORKSPACE_ADMIN && $workspace && $request->user()->workspace_id === $workspace->id ){
+                if($workspace){
                     $workspace->name = $request->name;
                     $workspace->organization_name = $request->organization_name;
                     $workspace->domain = $request->domain;
@@ -120,19 +73,15 @@ class WorkspaceController extends Controller
                 //         $user->avatar = $path;
                 // }
                     $workspace->update();
-                    // $workspace->makeHidden(['secret_code', 'secret_key', 'workspace_admin_id']);
-                    return response()->json(['status'=>'true', 'message'=>'Workspace Updated!', 'data'=>$workspace]);
-                }
-                if($request->user()->role !== UserRole::WORKSPACE_ADMIN || $request->user()->workspace_id = $workspace->id) 
-                    return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
-                if(is_null($workspace)) 
-                    return response()->json(['status'=>'false', 'message'=>'Workspace not found!', 'data'=>[]], 404);
+                    $this->jsonResponse(true, "Workspace Updated successfully", $workspace);
+                } else 
+                    return $this->jsonResponse(false, "Workspace not found", [], 404);
 
             }
 
             
-            return response()->json(['status'=>'true', 'message'=>'Workspace Edited!', 'data'=>$workspace]);
-        } else return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
+        } else 
+            return $this->jsonResponse(false, "Forbidden", [], 403);
     }
 
     public function getProjectsByWorkspace(Request $request, $id)
@@ -141,7 +90,6 @@ class WorkspaceController extends Controller
             $workspace = Workspace::findOrFail($id);
             if($workspace && $workspace->projects) 
                 return response()->json(['status'=>'true', 'message'=>'Projects of Workspace', 'data'=>$workspace->projects]);
-                return response()->json(['status'=>'true', 'message'=>'Projects of Workspace', 'data'=>[]]);
         } else 
             return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
     }
@@ -170,29 +118,10 @@ class WorkspaceController extends Controller
 
             return $this->jsonResponse('true', 'Members of Workspace!', $listMembers);
         } else 
-        return $this->jsonResponse('false', 'Forbidden', [], 403);
+            return $this->jsonResponse('false', 'Forbidden', [], 403);
 
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //

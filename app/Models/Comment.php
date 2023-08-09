@@ -15,4 +15,14 @@ class Comment extends Model
         'task_id',
         'type',
     ];
+
+    public function task()
+    {
+        return $this->belongsTo(Task::class);
+    }
+
+    public function creator()
+    {
+    return $this->belongsTo(User::class, 'created_by');
+    }
 }
