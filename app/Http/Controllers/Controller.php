@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use App\Models\Notification;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 class Controller extends BaseController
 {
@@ -89,7 +90,7 @@ class Controller extends BaseController
         return false;
     }
     
-    protected function autoMakeComment(Resquest $request, $type){
+    protected function autoMakeComment($type, $created_by, $task_id, $makeContent){
         //type == 1 => tạo task
         //type == 2 => edit task
         //type == 3 =>
@@ -97,12 +98,18 @@ class Controller extends BaseController
             $content = "added a new Task";
             $comment = Comment::create([
                 'content'           =>$content,
-                'created_by'        =>$request->user()->id,
+                'created_by'        =>$created_by,
                 'task_id'           =>$task_id,
                 'type'              =>"ADD",
             ]);
         } else if($type === 2){
-
+            $content = "updated Task";
+            $comment = Comment::create([
+                'content'   =>$content,
+                'created_by'        =>$created_by,
+                'task_id'           =>$task_id,
+                'type'              =>"UPDATE",
+            ]);
         }
 
     }

@@ -57,7 +57,7 @@ class TaskController extends Controller
                 $parentTask->subTasks()->save($issue);
             }
             $issue->save();
-
+            $this->autoMakeComment(1, $request->user()->id, $issue->id, "");
             if($issue->assignee_id) {
                 $this->makeNotification($issue->assignee_id, $issue->task_key, 1);
             }
