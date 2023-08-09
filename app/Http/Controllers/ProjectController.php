@@ -130,7 +130,7 @@ class ProjectController extends Controller
     }
 
     public function getAllMembersOfProject(Request $request, $id){
-        if($this->checkInsideProject($request, $project_id)){
+        if($this->checkInsideProject($request, $id)){
             $project = Project::findOrFail($id);
             return $project->users;
         }
