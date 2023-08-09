@@ -107,7 +107,7 @@ class ProjectController extends Controller
     public function addListMembersToProject(Request $request){
 
         try{
-            if((($request->user()->role === UserRole::WORKSPACE_ADMIN || $request->user()->role === UserRole::PM) ) && $this->checkInsideProject($request, $id)){
+            if((($request->user()->role === UserRole::WORKSPACE_ADMIN || $request->user()->role === UserRole::PM) )){
                 $project = Project::find($request->input('project_id'));
                 if(!$project) return response()->json(['status'=>'false', 'message'=>'Project not found!', 'data'=>[]], 404);
     
