@@ -7,62 +7,38 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
 use App\Models\Milestone;
 use App\Models\Project;
+use App\Enums\UserRole;
 
 class MilestoneController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
 
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {  
-        //ai có quyền tạo
-        $validator = Validator::make($request->all(), [
-            'name'                =>  'required|string',
-            'description'          =>  'nullable',   
-            'start_date'           =>  'nullable', 
-            'due_date'             =>  'nullable',
-            'project_id'           =>  'required',  
+    public function store(Request $request){  
+        if ($request->user()->role ==  UserRole::PM && $this->checkInsideProject($request, $request->project_id)){
+            $validator = Validator::make($request->all(), [
+                'name'                =>  'required|string',
+                'description'          =>  'nullable',   
+                'start_date'           =>  'nullable', 
+                'due_date'             =>  'nullable',
+                'project_id'           =>  'required',  
         ]);
 
-        if($validator->fails()){
-            $error = $validator->errors()->all()[0];
-            return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
-        } else {
-            $milestone = Milestone::create([
-                'name'             => $request->name,
-                'description'       => $request->description,
-                'start_date'      =>  $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d'),
-                'due_date'        =>  $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d'),
-                'project_id'        => $request->project_id,
-                'created_by'        => $request->user()->id,
-            ]);
-            
-            return response()->json(['status'=>'true', 'message'=>'Milestone Created!', 'data'=>$milestone]);
+            if($validator->fails()){
+                $error = $validator->errors()->all()[0];
+                return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
+            } else {
+                $milestone = Milestone::create([
+                    'name'             => $request->name,
+                    'description'       => $request->description,
+                    'start_date'      =>  $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d'),
+                    'due_date'        =>  $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d'),
+                    'project_id'        => $request->project_id,
+                    'created_by'        => $request->user()->id,
+                ]);
+                
+                return response()->json(['status'=>'true', 'message'=>'Milestone Created!', 'data'=>$milestone]);
         }
+        } else 
+            return $this->jsonResponse(false, 'Forbidden' ,[], 403);
     }
 
     /**
@@ -71,46 +47,27 @@ class MilestoneController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        if(1){
-            $milestone = Milestone::find($id);
-            if($milestone) return response()->json(['status'=>'true', 'message'=>'Details of  Milestone ', 'data'=>$milestone]);
-            return response()->json(['status'=>'false', 'message'=>'Milestone not found! ', 'data'=>[]], 404);
-        }
+    public function show(Request $request, $id){
+        $milestone = Milestone::find($id);
+        if($milestone && $this->checkInsideProject($request, $milestone->project_id))
+            return $this->jsonResponse(true, "Details of a milestone", $milestone);
+        return $this->jsonResponse(false, "Forbidden", [], 403);
     }
 
-    public function getMilestoneByProject($id)
-    {
+    public function getMilestoneByProject(Request $request, $id){
         try{
-            $project = Project::findOrFail($id);
-            $milestone = $project->milestones;
-            return response()->json(['status'=>'true', 'message'=>'Get milestones !', 'data'=>$milestone]);
+            if($this->checkInsideProject($request, $id)){
+                $project = Project::findOrFail($id);
+                $milestones = $project->milestones;
+                return $this->jsonResponse(true, "Milestone of a Project!", $milestones);
+            }
+            return $this->jsonResponse(false, "Forbidden", [], 403);
         } catch (\Exception $e){
             return response()->json(['status'=>'false', 'message'=>'Get milestones failed!', 'data'=>[]], 500);
         }
         
-
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         try{
@@ -125,33 +82,30 @@ class MilestoneController extends Controller
                 return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
             } else {
                 $milestone = Milestone::findOrFail($id);
+                if($this->checkInsideProject($request, $milestone->project_id) && $request->user()->role == UserRole::PM){
+                    $milestone->name = $request->name;
+                    $milestone->description = $request->description;
+                    $milestone->start_date = $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d');
+                    $milestone->due_date = $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d');
 
-                $milestone->name = $request->name;
-                $milestone->description = $request->description;
-                $milestone->start_date = $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d');
-                $milestone->due_date = $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d');
-
-                $milestone->update();
-
-                return response()->json(['status'=>'true', 'message'=>'Milestone Updated!', 'data'=>$milestone]);
-
+                    $milestone->update();
+                    return $this->jsonResponse(true, "Milestone updated successfully!", $milestone);
+                }
+                return $this->jsonResponse(false, "Forbidden", [], 403);
             }
-
-
-
         } catch (\Exception $e){
             return response()->json(['status'=>'false', 'message'=>'Get milestones failed!', 'data'=>[]], 500);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        if($this->checkInsideProject($request, $milestone->project_id) && $request->user()->role == UserRole::PM){
+            $milestone = Milestone::findOrFail($id);
+            $milestone->delete();
+            return response()->json(['message' => 'Milestone deleted successfully'], 200);
+        }
+        return $this->jsonResponse(false, "Forbidden", [], 403);
+       
     }
 }

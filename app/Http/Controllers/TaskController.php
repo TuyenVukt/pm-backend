@@ -12,11 +12,6 @@ use App\Models\Notification;
 
 class TaskController extends Controller
 {
-
-    public function create()
-    {
-    }
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -15,7 +15,6 @@ class ProjectController extends Controller
     //create a project 
     public function create(Request $request)
     {
-
             $validator = Validator::make($request->all(), [
                 'name'                =>  'required|string',
                 'project_key'         =>  'required|string',
@@ -44,7 +43,7 @@ class ProjectController extends Controller
 
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         if($this->checkInsideProject($request, $id)){
             $project = Project::findOrFail($id);
@@ -130,7 +129,7 @@ class ProjectController extends Controller
         
     }
 
-    public function getAllMembersOfProject($id){
+    public function getAllMembersOfProject(Request $request, $id){
         if($this->checkInsideProject($request, $project_id)){
             $project = Project::findOrFail($id);
             return $project->users;
