@@ -21,21 +21,20 @@ class MilestoneController extends Controller
                 'due_date'             =>  'nullable',
                 'project_id'           =>  'required',  
         ]);
-
-            if($validator->fails()){
+        if($validator->fails()){
                 $error = $validator->errors()->all()[0];
                 return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
-            } else {
-                $milestone = Milestone::create([
-                    'name'             => $request->name,
-                    'description'       => $request->description,
-                    'start_date'      =>  $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d'),
-                    'due_date'        =>  $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d'),
-                    'project_id'        => $request->project_id,
-                    'created_by'        => $request->user()->id,
-                ]);
+        } else {
+            $milestone = Milestone::create([
+                'name'             => $request->name,
+                'description'       => $request->description,
+                'start_date'      =>  $request->start_date ? $request->start_date : Carbon::now()->format('Y-m-d'),
+                'due_date'        =>  $request->due_date ? $request->due_date : Carbon::now()->format('Y-m-d'),
+                'project_id'        => $request->project_id,
+                'created_by'        => $request->user()->id,
+            ]);
                 
-                return response()->json(['status'=>'true', 'message'=>'Milestone Created!', 'data'=>$milestone]);
+            return response()->json(['status'=>'true', 'message'=>'Milestone Created!', 'data'=>$milestone]);
         }
         } else 
             return $this->jsonResponse(false, 'Forbidden' ,[], 403);

@@ -122,7 +122,7 @@ class TaskController extends Controller
         }
 
 
-        $data = $tasks->with('subTasks', 'assignee:id,name,avatar')->get();
+        $data = $tasks->whereNull('parent_task_id')->with('subTasks', 'assignee:id,name,avatar')->get();
 
         return $this->jsonResponse('true', '!', $data);
     }
