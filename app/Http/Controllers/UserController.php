@@ -48,7 +48,7 @@ class UserController extends Controller
             $validator = Validator::make($request->all(), [
                 'name'          =>  'required',
                 'email'         =>  'required|email|unique:users,id',
-                'avatar'        =>  'nullable|image'
+                'avatar'        =>  'nullable'
             ]);
             if($validator->fails()){
                 $error = $validator->errors()->all()[0];
@@ -57,16 +57,21 @@ class UserController extends Controller
                 $user = User::find($request->user()->id);
                 $user->name = $request->name;
                 $user->email = $request->email;
-                if($request->avatar && $request->avatar->isValid()){
-                    $file_name = $user->id.'.'.$request->avatar->extension();
-                    $request->file('avatar')->storeAs('public/images/avatars', $file_name );
-                    $path = "public/images/avatars/$file_name ";
-                    $old_path = $user->avatar;
-                    $user->avatar = $path;
-                    $user->update();
+                // if($request->avatar && $request->avatar->isValid()){
+                //     $file_name = $user->id.'.'.$request->avatar->extension();
+                //     $request->file('avatar')->storeAs('public/images/avatars', $file_name );
+                //     $path = "public/images/avatars/$file_name ";
+                //     $old_path = $user->avatar;
+                //     $user->avatar = $path;
+                //     $user->update();
 
-                    return response()->json(['status'=>'true', 'message'=>'Profile Updated!', 'data'=>$user]);
-                }
+                //     return response()->json(['status'=>'true', 'message'=>'Profile Updated!', 'data'=>$user]);
+                // }
+                if($request->avatar && strcmp($request->avatar, $user->avatar) !== 0) 
+                        $user->avatar = $request->avatar;
+                $user->update();
+
+                return response()->json(['status'=>'true', 'message'=>'Profile Updated!', 'data'=>$user]);
 
             }
         } catch (\Exception $e){
@@ -79,33 +84,33 @@ class UserController extends Controller
             $validator = Validator::make($request->all(), [
                 'name'          =>  'required',
                 'email'         =>  'required|email|unique:users,id',
-                'avatar'        =>  'nullable|image',
+                'avatar'        =>  'nullable',
                 'role'          =>  'required'
             ]);
             if($validator->fails()){
                 $error = $validator->errors()->all()[0];
                 return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
-            } else {
-                //kiem tra xam co phai la admin_workspace hay khong?
-                //kiem tra user co phai la nguoi thuoc workspace quan li hay khong
+            } else {  
                 $user = User::find($id);
                 if($request->user()->role === UserRole::WORKSPACE_ADMIN && $user && $request->user()->workspace_id === $user->workspace_id ){
                     $user->name = $request->name;
                     $user->email = $request->email;
                     $user->role = $request->role;
-                    $old_path = $user->avatar;
-                    if($request->avatar && strcmp($request->avatar, $old_path) != 0  && $request->avatar->isValid()){
-                        $file_name = $user->id.'.'.$request->avatar->extension();
-                        $request->file('avatar')->storeAs('public/images/avatars', $file_name );
-                        $path = "public/images/avatars/$file_name ";
-                        $user->avatar = $path;
-                }
+                    if($request->avatar && strcmp($request->avatar, $user->avatar) !== 0) 
+                        $user->avatar = $request->avatar;
+                    // $old_path = $user->avatar;
+                //     if($request->avatar && strcmp($request->avatar, $old_path) != 0  && $request->avatar->isValid()){
+                //         $file_name = $user->id.'.'.$request->avatar->extension();
+                //         $request->file('avatar')->storeAs('public/images/avatars', $file_name );
+                //         $path = "public/images/avatars/$file_name ";
+                //         $user->avatar = $path;
+                // }
                 $user->update();
                 return response()->json(['status'=>'true', 'message'=>'Profile Updated!', 'data'=>$user]);
 
                 if($request->user()->role !== UserRole::WORKSPACE_ADMIN || $request->user()->workspace_id = $user->workspace_id) return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
                 if(is_null($user)) return response()->json(['status'=>'false', 'message'=>'Member not found!', 'data'=>[]], 404);
-                }
+                } else return $this->jsonResponse(false, 'Forbidden' ,[], 403);
 
             }
         } catch (\Exception $e){

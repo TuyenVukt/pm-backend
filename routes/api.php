@@ -94,14 +94,16 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
 });
 
-Route::post('/upload', [FileController::class, 'upload']);
-
+// Route::post('/upload', [FileController::class, 'upload']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::get('/verify-email/{id}/{token}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/delete', [UserController::class,'deleteImg']);
 Route::get('/avatar/{id}', [UserController::class,'showAvatar']);
 Route::get('/test', function () {
     return "12345";
 });
+
 

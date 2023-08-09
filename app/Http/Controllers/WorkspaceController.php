@@ -19,7 +19,7 @@ class WorkspaceController extends Controller
 
         $workspace = Workspace::create([
             'name'          =>          $data['name'],
-            'organization_name'  =>          $data['organization'],
+            'organization_name'  =>     $data['organization'],
             'domain'        =>          $data['domain'],
             'secret_code'   =>          $data['secret_code'],
             'secret_key'    =>          $secret_key,
@@ -46,7 +46,7 @@ class WorkspaceController extends Controller
 
     public function edit(Request $request, $id)
     {
-        if($request->user()->workspace_id == $id && $request->user()->Role ==  UserRole::WORKSPACE_ADMIN){
+        if($request->user()->workspace_id == $id && $request->user()->role ==  UserRole::WORKSPACE_ADMIN){
             $validator = Validator::make($request->all(), [
                 'name'                =>  'required|string',
                 'organization_name'   =>  'required',
@@ -59,7 +59,6 @@ class WorkspaceController extends Controller
                 return $this->jsonResponse(false, $error, [], 422);
             } else {
                 $workspace = Workspace::find($id);
-
                 if($workspace){
                     $workspace->name = $request->name;
                     $workspace->organization_name = $request->organization_name;
@@ -72,14 +71,14 @@ class WorkspaceController extends Controller
                 //         $path = "images/avatars/$file_name ";
                 //         $user->avatar = $path;
                 // }
-                    $workspace->update();
-                    $this->jsonResponse(true, "Workspace Updated successfully", $workspace);
+                if($request->avatar && strcmp($request->avatar, $workspace->avatar) !== 0)  $workspace->avatar = $request->avatar;
+                $workspace->update();
+                return $this->jsonResponse(true, "Workspace updated successfully!", $workspace);
                 } else 
-                    return $this->jsonResponse(false, "Workspace not found", [], 404);
+                    return $this->jsonResponse(false, "Workspace not found!", [], 404);
 
             }
 
-            
         } else 
             return $this->jsonResponse(false, "Forbidden", [], 403);
     }
@@ -91,7 +90,7 @@ class WorkspaceController extends Controller
             if($workspace && $workspace->projects) 
                 return response()->json(['status'=>'true', 'message'=>'Projects of Workspace', 'data'=>$workspace->projects]);
         } else 
-            return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
+        return $this->jsonResponse(false, 'Forbidden' ,[], 403);
     }
 
     public function getMembersByWorkspace(Request $request, $id)

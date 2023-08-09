@@ -90,7 +90,9 @@ class Controller extends BaseController
     }
     
     protected function autoMakeComment(Resquest $request, $type){
-        //type == 1 => tạp task
+        //type == 1 => tạo task
+        //type == 2 => edit task
+        //type == 3 =>
         if($type === 1){
             $content = "added a new Task";
             $comment = Comment::create([
@@ -99,7 +101,9 @@ class Controller extends BaseController
                 'task_id'           =>$task_id,
                 'type'              =>"ADD",
             ]);
-        } 
+        } else if($type === 2){
+
+        }
 
     }
 
