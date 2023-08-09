@@ -46,6 +46,7 @@ class AuthController extends Controller
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
             'password' => ['required','string', RulesPassword::defaults()],
+            'avatar'    => 'required',
             'role' => 'required'
         ]);
 
@@ -53,7 +54,7 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'avatar' => isset($data['avatar']) ? $data['avatar'] : '/images/avatar/default.png',
+            'avatar' => $data['avatar'],
             'role' => $data['role'],
             'workspace_id' => auth()->user()->workspace_id ?? 0,
         ]);
