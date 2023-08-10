@@ -70,6 +70,8 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/get-tasks/{project_id}', [TaskController::class, 'show']);
     Route::get('/tasks-by-project/{project_id}', [TaskController::class, 'getTasksWithSubTasksInProject']);
     Route::get('/sub_task_by_task/{id}', [TaskController::class, 'getSubTaskByTask']);
+    Route::get('/dashboard_tasks', [TaskController::class, 'dashBoardTask']);
+
 
     //Comment
     Route::post('/comment', [CommentController::class, 'createComment']);

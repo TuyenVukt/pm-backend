@@ -175,13 +175,13 @@ class ProjectController extends Controller
 
         $formattedCounts = [
             'Open' => 0,
-            'In-Progress' => 0,
+            'In_Progress' => 0,
             'Resolved' => 0,
             'Closed' => 0,
         ];
 
         foreach ($taskStatusCounts as $count) {
-            $status = ($count->status === 'In Progress') ? 'In-Progress' : $count->status;
+            $status = ($count->status === 'In Progress') ? 'In_Progress' : $count->status;
             $formattedCounts[$status] = $count->count;
         }
     
@@ -203,13 +203,13 @@ class ProjectController extends Controller
 
         $formattedCounts = [
             'Open' => 0,
-            'In-Progress' => 0,
+            'In_Progress' => 0,
             'Resolved' => 0,
             'Closed' => 0,
         ];
 
         foreach ($taskStatusCounts as $count) {
-            $status = ($count->status === 'In Progress') ? 'In-Progress' : $count->status;
+            $status = ($count->status === 'In Progress') ? 'In_Progress' : $count->status;
             $formattedCounts[$status] = $count->count;
         }
 
@@ -217,5 +217,6 @@ class ProjectController extends Controller
     }
 
     return response()->json(['milestone_task_status_counts' => $result]);
+    // return $this->jsonResponse(true, "list", $result);
 }
 }

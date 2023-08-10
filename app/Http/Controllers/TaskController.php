@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Carbon;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Project;
@@ -44,7 +45,7 @@ class TaskController extends Controller
                     'status'                =>  $request->status,
                     'priority'              =>  $request->priority,
                 ]);
-    
+                if($request->estimate_time) $issue->estimate_time = $request->estimate_time;
                 if($request->start_time) $issue->start_time = $request->start_time;
                 if($request->end_time) $issue->end_time = $request->end_time;
                 if($request->assignee_id) {
@@ -144,7 +145,7 @@ class TaskController extends Controller
     public function findById(Request $request, $key)
     {
         $tasks = Task::with('subTasks', 'assignee:id,name,avatar')->find($key);
-        if($this->checkInsideProject($request, $project_id)){
+        if($this->checkInsideProject($request, $tasks->project_id)){
             return $this->jsonResponse(true, 'Details of Task!', $tasks);
         } return $this->jsonResponse(false, "Forbidden", [], 403);
 
@@ -227,7 +228,6 @@ class TaskController extends Controller
                         $taskLog->save();
                     }
                     //end make log
-
                     return $this->jsonResponse('true', 'Task Updated Successfully!', $issue);
                 }
                     return response()->json(['status'=>'false', 'message'=>'Task not found!', 'data'=>[]], 404);
@@ -235,6 +235,37 @@ class TaskController extends Controller
         } else return response()->json(['status'=>'false', 'message'=>'Forbidden!', 'data'=>[]], 403);
     }
     }
+
+    public function dashBoardTask(Request $request)
+{
+    $user_id = $request->user()->id;
+    $query = Task::query();
+
+    if ($request->input('created')) {
+        $query->where('created_by', $user_id);
+    } else{
+        $query->where('assignee_id', $user_id);
+    }
+
+
+    if ($request->input('all')) {
+    } else {
+        // Mặc định là chỉ lấy task có end_time >= ngày hôm nay
+        // $query->where('end_time', '>=', Carbon::now());
+        
+        if ($request->input('due_today')) {
+            $query->whereDate('end_time', '=', Carbon::today());
+        }
+        
+        if ($request->input('overdue')) {
+            $query->where('end_time', '<', Carbon::now());
+        }
+    }
+
+    $tasks = $query->get();
+
+    return response()->json(['tasks' => $tasks]);
+}
 
     public function destroy($id)
     {
