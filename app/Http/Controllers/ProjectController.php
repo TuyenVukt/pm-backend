@@ -175,13 +175,14 @@ class ProjectController extends Controller
 
         $formattedCounts = [
             'Open' => 0,
-            'In Progress' => 0,
+            'In-Progress' => 0,
             'Resolved' => 0,
             'Closed' => 0,
         ];
 
         foreach ($taskStatusCounts as $count) {
-            $formattedCounts[$count->status] = $count->count;
+            $status = ($count->status === 'In Progress') ? 'In-Progress' : $count->status;
+            $formattedCounts[$status] = $count->count;
         }
     
 
@@ -202,13 +203,14 @@ class ProjectController extends Controller
 
         $formattedCounts = [
             'Open' => 0,
-            'In Progress' => 0,
+            'In-Progress' => 0,
             'Resolved' => 0,
             'Closed' => 0,
         ];
 
         foreach ($taskStatusCounts as $count) {
-            $formattedCounts[$count->status] = $count->count;
+            $status = ($count->status === 'In Progress') ? 'In-Progress' : $count->status;
+            $formattedCounts[$status] = $count->count;
         }
 
         $result["{$milestone->name}"] = $formattedCounts;
