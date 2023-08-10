@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Project;
+use App\Models\Milestone;
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Models\Task;
 use Illuminate\Support\Carbon;
 
 
@@ -164,4 +166,54 @@ class ProjectController extends Controller
     public function checkUser(Request $request, $project_id){
         return $this->checkInsideProject($request, $project_id);
     }
+
+    public function getTaskStatusCount(Request $request, $project_id){
+        $taskStatusCounts = Task::where('project_id', $project_id)
+        ->selectRaw('status, count(*) as count')
+        ->groupBy('status')
+        ->get();
+
+        $formattedCounts = [
+            'Open' => 0,
+            'In Progress' => 0,
+            'Resolved' => 0,
+            'Closed' => 0,
+        ];
+
+        foreach ($taskStatusCounts as $count) {
+            $formattedCounts[$count->status] = $count->count;
+        }
+    
+
+    return response()->json(['task_status_counts' => $formattedCounts]);
+    }
+
+    public function getTaskMilestoneStatusCount($project_id)
+{
+    $milestones = Milestone::where('project_id', $project_id)->get();
+
+    $result = [];
+
+    foreach ($milestones as $milestone) {
+        $taskStatusCounts = $milestone->tasks()
+            ->selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->get();
+
+        $formattedCounts = [
+            'Open' => 0,
+            'In Progress' => 0,
+            'Resolved' => 0,
+            'Closed' => 0,
+        ];
+
+        foreach ($taskStatusCounts as $count) {
+            $formattedCounts[$count->status] = $count->count;
+        }
+
+        $result["{$milestone->name}"] = $formattedCounts;
+    }
+
+    return response()->json(['milestone_task_status_counts' => $result]);
+}
 }

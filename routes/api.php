@@ -54,6 +54,8 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/members_of_project/{id}', [ProjectController::class, 'getAllMembersOfProject']);
     Route::get('/members-not-in-project/{project_id}', [ProjectController::class, 'getUsersNotInProject']);
     Route::get('/projects-by-user', [ProjectController::class, 'getProjectsByUserId']);
+    Route::get('/project/{project_id}/task_status_count', [ProjectController::class, 'getTaskStatusCount']);
+    Route::get('/project/{project_id}/task_milestone_status_count', [ProjectController::class, 'getTaskMilestoneStatusCount']);
     //milestone
     Route::post('/milestone', [MilestoneController::class, 'store']);
     Route::get('/milestone/{id}', [MilestoneController::class, 'show']);
@@ -89,8 +91,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/count_noti', [NotificationController::class, 'countUnreadNotiByUser']);
     Route::post('/read_noti/{id}', [NotificationController::class, 'readNotification']);
     //
-
-    Route::get('/check-user/{project_id}', [ProjectController::class, 'checkUser']);
 
 });
 

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Project;
-use App\Models\Issue;
+use App\Models\Task;
 
 class Milestone extends Model
 {
@@ -26,7 +26,7 @@ class Milestone extends Model
     }
 
 
-    public function issues(){
-        return $this->hasMany(Issue::class);
+    public function tasks(){
+        return $this->hasMany(Task::class);
     }
 }
