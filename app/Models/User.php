@@ -48,15 +48,16 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    public function sendEmailVerificationNotificationWithToken($token, $redirectUrl)
+    public function sendEmailVerificationNotificationWithToken($token, $password)
     {
-        $this->notify(new VerifyEmailWithToken($token, $redirectUrl));
+        $this->notify(new VerifyEmailWithToken($token, $password));
     }
 
     public function sendPasswordResetNotification($token)
     {
 
-        $url = 'http://localhost:3000/reset-password?token=' . $token;
+        // $url = 'http://localhost:3000/reset-password?token=' . $token;
+        $url = 'https://tuyen-sp.vercel.app/reset-password?token=' . $token;
 
         $this->notify(new ResetPasswordNotification($url));
     }

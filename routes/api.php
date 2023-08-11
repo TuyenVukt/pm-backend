@@ -39,7 +39,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/update_profile', [UserController::class,'updateProfile']);
     Route::post('/update_member/{id}', [UserController::class,'updateMemberProfile']);
     Route::get('/member/{id}', [UserController::class,'getMemberById']);
-
     //workspace
     Route::post('/workspace', [WorkspaceController::class, 'create']);
     Route::get('/workspace/{id}', [WorkspaceController::class, 'show']);
@@ -52,6 +51,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/project/{id}', [ProjectController::class, 'show']);
     Route::post('/project/{id}', [ProjectController::class, 'update']);
     Route::get('/members_of_project/{id}', [ProjectController::class, 'getAllMembersOfProject']);
+    Route::delete('/remove_member_project/{id}', [ProjectController::class, 'removeUserFromProject']);
     Route::get('/members-not-in-project/{project_id}', [ProjectController::class, 'getUsersNotInProject']);
     Route::get('/projects-by-user', [ProjectController::class, 'getProjectsByUserId']);
     Route::get('/project/{project_id}/task_status_count', [ProjectController::class, 'getTaskStatusCount']);
@@ -71,6 +71,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/tasks-by-project/{project_id}', [TaskController::class, 'getTasksWithSubTasksInProject']);
     Route::get('/sub_task_by_task/{id}', [TaskController::class, 'getSubTaskByTask']);
     Route::get('/dashboard_tasks', [TaskController::class, 'dashBoardTask']);
+    Route::get('/dashboard_update', [WorkspaceController::class, 'getCommentsByWorkspace']);
 
 
     //Comment

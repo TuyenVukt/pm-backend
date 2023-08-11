@@ -131,13 +131,52 @@ class ProjectController extends Controller
         
     }
 
-    public function getAllMembersOfProject(Request $request, $id){
-        if($this->checkInsideProject($request, $id)){
-            $project = Project::findOrFail($id);
-            return $project->users;
+    public function getAllMembersOfProject(Request $request, $project_id){
+        if($this->checkInsideProject($request, $project_id)){
+            // $project = Project::findOrFail($id);
+            // return $project->users;
+            // $project_id = $request->input('project_id');
+        $name = $request->input('name');
+        $role = $request->input('role');
+
+        $query = User::whereHas('projects', function ($query) use ($project_id) {
+            $query->where('project_id', $project_id);
+        });
+
+        if ($name) {
+            $query->where(function ($query) use ($name) {
+                $query->where('name', 'LIKE', "%$name%")
+                    ->orWhere('email', 'LIKE', "%$name%");
+            });
+        }
+
+        if ($role) {
+            $query->where('role', $role);
+        }
+
+        $users = $query->orderBy('id', 'desc')->get();
+
+        return response()->json($users);
         }
 
 
+    }
+
+    public function removeUserFromProject(Request $request, $project_id){
+    $role = $request->user()->role;
+    $user_id = $request->user_id;
+    if(($role === UserRole::WORKSPACE_ADMIN || $role === UserRole::PM) && $this->checkInsideProject($request, $project_id)){
+        // Kiểm tra xem dự án và người dùng có tồn tại không
+        $project = Project::findOrFail($project_id);
+        $user = User::findOrFail($user_id);
+        // Xóa người dùng ra khỏi dự án
+        if($user->role !== UserRole::WORKSPACE_ADMIN){
+            $project->users()->detach($user);
+            return $this->jsonResponse(true, "User removed from project successfully!",[]);
+        }
+    } else
+        return $this->jsonResponse(false, 'Forbidden' ,[], 403);
+    
     }
 
     public function getProjectsByUserId(Request $request){
@@ -161,10 +200,6 @@ class ProjectController extends Controller
             return $this->jsonResponse('true', 'List Projects By User!',$usersNotInProject);
         } else 
             return $this->jsonResponse(false, 'Forbidden' ,[], 403);
-    }
-
-    public function checkUser(Request $request, $project_id){
-        return $this->checkInsideProject($request, $project_id);
     }
 
     public function getTaskStatusCount(Request $request, $project_id){
@@ -217,6 +252,5 @@ class ProjectController extends Controller
     }
 
     return response()->json(['milestone_task_status_counts' => $result]);
-    // return $this->jsonResponse(true, "list", $result);
 }
 }

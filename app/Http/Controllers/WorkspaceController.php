@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Workspace;
+use App\Models\Comment;
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
@@ -115,10 +116,33 @@ class WorkspaceController extends Controller
             })
             ->get();
 
-            return $this->jsonResponse('true', 'Members of Workspace!', $listMembers);
+            return $this->jsonResponse(true, 'Members of Workspace 123!', $listMembers);
         } else 
             return $this->jsonResponse('false', 'Forbidden', [], 403);
 
+    }
+
+    public function getCommentsByWorkspace(Request $request)
+    {
+        $workspaceId = $request->user()->workspace_id;
+        $workspace = Workspace::find($workspaceId);
+
+        if (!$workspace) {
+            return response()->json(['message' => 'Workspace not found'], 404);
+        }
+
+         $comments = Comment::whereIn('task_id', function ($query) use ($workspaceId) {
+            $query->select('id')
+                ->from('tasks')
+                ->whereIn('project_id', function ($query) use ($workspaceId) {
+                    $query->select('id')
+                        ->from('projects')
+                        ->where('workspace_id', $workspaceId);
+                });
+        })
+        ->orderBy('id', 'desc')
+        ->get();
+        return response()->json(['comments' => $comments]);
     }
 
     public function destroy($id)

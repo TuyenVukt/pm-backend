@@ -156,6 +156,7 @@ class TaskController extends Controller
         $project_id = $request->project_id;
         $role = $request->user()->role;
         $user_id = $request->user()->id;
+        
         if($project_id && $this->checkInsideProject($request, $project_id)){ 
             if(1){ 
                 $validator = Validator::make($request->all(), [
@@ -174,7 +175,8 @@ class TaskController extends Controller
                 return response()->json(['status'=>'false', 'message'=>$error, 'data'=>[]], 422);
             } else {
                 $issue = Task::with('subTasks', 'assignee:id,name,avatar')->find($id);
-                if($issue && ($role === UserRole::PM || ($role === UserRole::MEMBER && $issue->is_child)) ){
+                
+                if($issue) {
                     $oldValues = [
                         'name' => $issue->name,
                         'description' => $issue->description,
@@ -252,7 +254,6 @@ class TaskController extends Controller
     } else {
         // Mặc định là chỉ lấy task có end_time >= ngày hôm nay
         // $query->where('end_time', '>=', Carbon::now());
-        
         if ($request->input('due_today')) {
             $query->whereDate('end_time', '=', Carbon::today());
         }
@@ -264,7 +265,7 @@ class TaskController extends Controller
 
     $tasks = $query->get();
 
-    return response()->json(['tasks' => $tasks]);
+    return $this->jsonResponse(true, "Tasks in dashboard!", $tasks);
 }
 
     public function destroy($id)

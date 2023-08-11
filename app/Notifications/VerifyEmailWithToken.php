@@ -12,14 +12,16 @@ class VerifyEmailWithToken extends VerifyEmail
     use Queueable;
 
     protected $token;
+    protected $password;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($token)
+    public function __construct($token, $password)
     {
         $this->token = $token;
+        $this->password = $password;
     }
 
     /**
@@ -48,6 +50,7 @@ class VerifyEmailWithToken extends VerifyEmail
 
         return (new MailMessage)
             ->subject('Verify Email Address')
+            ->line('This email has been created with the password as: '. $this->password)
             ->line('Please click the button below to verify your email address.')
             ->action('Verify Email Address', $verificationUrl)
             ->line('If you did not create an account, no further action is required.');

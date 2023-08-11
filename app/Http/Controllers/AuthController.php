@@ -67,9 +67,8 @@ class AuthController extends Controller
             'remember_token' => $token,
         ])->save();
         
-        $redirectUrl = 'http://127.0.0.1:8001/';
         // Send verification email with the token
-        $user->sendEmailVerificationNotificationWithToken($token, $redirectUrl);
+        $user->sendEmailVerificationNotificationWithToken($token, $data['password']);
 
         $res = [
             'user' => $user,
