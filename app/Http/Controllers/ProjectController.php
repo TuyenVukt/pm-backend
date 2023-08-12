@@ -165,12 +165,12 @@ class ProjectController extends Controller
     public function removeUserFromProject(Request $request, $project_id){
     $role = $request->user()->role;
     $user_id = $request->user_id;
-    if(($role === UserRole::WORKSPACE_ADMIN || $role === UserRole::PM) && $this->checkInsideProject($request, $project_id)){
+    if(($role == UserRole::WORKSPACE_ADMIN || $role == UserRole::PM) && $this->checkInsideProject($request, $project_id)){
         // Kiểm tra xem dự án và người dùng có tồn tại không
         $project = Project::findOrFail($project_id);
         $user = User::findOrFail($user_id);
         // Xóa người dùng ra khỏi dự án
-        if($user->role !== UserRole::WORKSPACE_ADMIN){
+        if($user->role != UserRole::WORKSPACE_ADMIN){
             $project->users()->detach($user);
             return $this->jsonResponse(true, "User removed from project successfully!",[]);
         }
