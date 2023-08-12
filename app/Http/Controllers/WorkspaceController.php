@@ -7,6 +7,7 @@ use App\Models\Comment;
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class WorkspaceController extends Controller
 {
@@ -122,27 +123,57 @@ class WorkspaceController extends Controller
 
     }
 
-    public function getCommentsByWorkspace(Request $request)
+    public function getCommentsInDashboard(Request $request)
     {
-        $workspaceId = $request->user()->workspace_id;
-        $workspace = Workspace::find($workspaceId);
+        $role = $request->user()->role;
+        if($role === UserRole::WORKSPACE_ADMIN){
+            $workspaceId = $request->user()->workspace_id;
+            $workspace = Workspace::find($workspaceId);
+    
+            if (!$workspace) {
+                return response()->json(['message' => 'Workspace not found'], 404);
+            }
+    
+             $comments = Comment::with(['task:id,task_key,name', 'creator:id,name,avatar'])
+             ->whereIn('task_id', function ($query) use ($workspaceId) {
+                $query->select('id')
+                    ->from('tasks')
+                    ->whereIn('project_id', function ($query) use ($workspaceId) {
+                        $query->select('id')
+                            ->from('projects')
+                            ->where('workspace_id', $workspaceId);
+                    });
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+            return $this->jsonResponse(true, "Dashboard Updated here!", $comments);
+        } else if ($role === UserRole::PM || $role === UserRole::MEMBER){
+        //     $comments = DB::table('comments')
+        //     ->join('tasks', 'comments.task_id', '=', 'tasks.id')
+        //     ->join('projects', 'tasks.project_id', '=', 'projects.id')
+        //     ->join('user_project', 'projects.id', '=', 'user_project.project_id')
+        //     ->where('user_project.user_id', $request->user()->id)
+        //     ->orderBy('comments.id', 'desc')
+        //     ->select('comments.*')
+        //     ->get();
 
-        if (!$workspace) {
-            return response()->json(['message' => 'Workspace not found'], 404);
+        // return response()->json(['comments' => $comments]);
+        return $this->jsonResponse(true, "Dashboard Updated here!", []);
+        } else
+            return $this->jsonResponse(false, "Forbidden", [], 403);
+       
+    }
+
+    public function deleteUser(Request $request, $user_id)
+    {
+        if($request->user()->role === UserRole::WORKSPACE_ADMIN){
+            $user = User::findOrFail($user_id);
+            if($user->workspace_id ===$request->user()->workspace_id){
+                $user->delete();
+                return $this->jsonResponse(true, 'User deleted successfully', []);
+            } 
         }
-
-         $comments = Comment::whereIn('task_id', function ($query) use ($workspaceId) {
-            $query->select('id')
-                ->from('tasks')
-                ->whereIn('project_id', function ($query) use ($workspaceId) {
-                    $query->select('id')
-                        ->from('projects')
-                        ->where('workspace_id', $workspaceId);
-                });
-        })
-        ->orderBy('id', 'desc')
-        ->get();
-        return response()->json(['comments' => $comments]);
+        return $this->jsonResponse(false, "Forbidden", [], 403);
     }
 
     public function destroy($id)

@@ -134,8 +134,6 @@ class UserController extends Controller
         }
 
         return Storage::download($avatar);
-        
     }
-
     
 }
