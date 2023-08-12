@@ -68,7 +68,8 @@ class AuthController extends Controller
         ])->save();
         
         // Send verification email with the token
-        $user->sendEmailVerificationNotificationWithToken($token, $data['password']);
+        $password = $data['password'];
+        $user->sendEmailVerificationNotificationWithToken($token, $password);
 
         $res = [
             'user' => $user,
