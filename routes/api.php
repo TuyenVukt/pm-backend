@@ -68,12 +68,12 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/task/{id}', [TaskController::class, 'update']);
     // Route::get('/task/{id}', [TaskController::class, 'findById']);
     Route::get('/task/{id}', [TaskController::class, 'findById']);
+    Route::delete('/task/{id}', [TaskController::class, 'destroy']);
     Route::get('/get-tasks/{project_id}', [TaskController::class, 'show']);
     Route::get('/tasks-by-project/{project_id}', [TaskController::class, 'getTasksWithSubTasksInProject']);
     Route::get('/sub_task_by_task/{id}', [TaskController::class, 'getSubTaskByTask']);
     Route::get('/dashboard_tasks', [TaskController::class, 'dashBoardTask']);
     Route::get('/dashboard_update', [WorkspaceController::class, 'getCommentsInDashboard']);
-
 
     //Comment
     Route::post('/comment', [CommentController::class, 'createComment']);

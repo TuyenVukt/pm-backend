@@ -274,9 +274,28 @@ class TaskController extends Controller
     return $this->jsonResponse(true, "Tasks in dashboard!", $tasks);
 }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        //check quyền ở đây
+        // PM: có thể làm hết, nhưng với Member chỉ có thể xóa subtassk thôi.
+        $task = Task::findOrFail($id);
+        $project_id = $task->project_id;
+        if($this->checkInsideProject($request, $project_id)){
+            if ($task->is_child) {
+                // Xóa task con và comment của task con
+                $task->delete();
+                $task->comments()->delete();
+            } else if(!$task->is_child && $request->user()->role == UserrOLE::PM){
+                // Xóa tất cả các sub task và comment của task cùng với các sub task
+                $task->subtasks()->delete();
+                $commentIds = $task->comments->pluck('id')->toArray();
+                $task->comments()->delete();
+                Comment::whereIn('task_id', $commentIds)->delete();
+                $task->delete();
+            }
+            return $this->jsonResponse(true, "Task ". $task->task_key. " and related data deleted successfully",[]);
+        } else 
+        return $this->jsonResponse(false, "Forbidden", [], 403); 
     }
 
 
