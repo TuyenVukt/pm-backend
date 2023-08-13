@@ -119,7 +119,10 @@ class TaskController extends Controller
             $tasks->where('project_id', $project_id);
 
             if ($key && !empty(trim($key))) {
-                $tasks->where('name', 'like', '%' . $key . '%');
+                $tasks->where(function ($subquery) use ($key) {
+                    $subquery->where('name', 'LIKE', "%$key%")
+                             ->orWhere('task_key', 'LIKE', "%$key%");
+                });
             }
 
             if ($milestone_id) {
@@ -127,7 +130,10 @@ class TaskController extends Controller
             }
 
             if ($status) {
-                $tasks->where('status', $status);
+                if(strcmp($status,'Not_Closed') === 0){
+                    $tasks->where('status', '<>', 'Closed');
+                    
+                } else $tasks->where('status', $status);
             }
 
             if ($assignee_id) {
