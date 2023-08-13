@@ -62,6 +62,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/milestone/{id}', [MilestoneController::class, 'show']);
     Route::get('/project/{id}/milestones', [MilestoneController::class, 'getMilestoneByProject']);
     Route::post('/milestone/{id}', [MilestoneController::class, 'update']);
+    Route::delete('/milestone/{id}', [MilestoneController::class, 'destroy']);
     //lấy Task theo milestone
     //task
     Route::post('/task', [TaskController::class, 'store']);
@@ -74,7 +75,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/sub_task_by_task/{id}', [TaskController::class, 'getSubTaskByTask']);
     Route::get('/dashboard_tasks', [TaskController::class, 'dashBoardTask']);
     Route::get('/dashboard_update', [WorkspaceController::class, 'getCommentsInDashboard']);
-
     //Comment
     Route::post('/comment', [CommentController::class, 'createComment']);
     Route::get('/comment/{id}', [ CommentController::class, 'show']);

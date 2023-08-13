@@ -55,9 +55,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function sendPasswordResetNotification($token)
     {
-        //link-token
-        // $url = 'http://localhost:3000/reset-password?token=' . $token;
-        $url = 'https://tuyen-sp.vercel.app/reset-password?token=' . $token;
+        //link-token-reset
+        $url = 'http://localhost:3000/reset-password?token=' . $token;
+        // $url = 'https://tuyen-sp.vercel.app/reset-password?token=' . $token;
 
         $this->notify(new ResetPasswordNotification($url));
     }

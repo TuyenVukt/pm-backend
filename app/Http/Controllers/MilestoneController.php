@@ -99,11 +99,34 @@ class MilestoneController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        $milestone = Milestone::with('tasks.subtasks.comments')->find($id);
         if($this->checkInsideProject($request, $milestone->project_id) && $request->user()->role == UserRole::PM){
-            $milestone = Milestone::findOrFail($id);
+            $milestone = Milestone::with('tasks.subtasks.comments')->find($id);
+
+            if (!$milestone) {
+                return response()->json(['message' => 'Milestone not found'], 404);
+            }
+    
+            // Xóa các comment của tất cả subtask của tất cả task của milestone
+            foreach ($milestone->tasks as $task) {
+                foreach ($task->subtasks as $subtask) {
+                    $subtask->comments()->delete();
+                }
+            }
+    
+            // Xóa tất cả subtask của tất cả task của milestone
+            foreach ($milestone->tasks as $task) {
+                $task->subtasks()->delete();
+            }
+    
+            // Xóa tất cả task của milestone
+            $milestone->tasks()->delete();
+    
+            // Xóa milestone
             $milestone->delete();
-            return response()->json(['message' => 'Milestone deleted successfully'], 200);
-        }
+    
+            return $this->jsonResponse(true, "This Milestone and related data deleted successfully",[]);}
+            
         return $this->jsonResponse(false, "Forbidden", [], 403);
        
     }
