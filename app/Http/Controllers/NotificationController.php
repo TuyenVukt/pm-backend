@@ -13,7 +13,7 @@ class NotificationController extends Controller
             $notis = Notification::query();
             $notis = $notis->where('user_id', $user_id);
             if($request->unread) $notis->whereNull('read_at');
-            $notis = $notis->get();
+            $notis = $notis->orderByDesc('id')->get();
             return $this->jsonResponse(true, "Get notifications by user", $notis);
         }
     }

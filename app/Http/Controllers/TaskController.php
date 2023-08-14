@@ -62,7 +62,7 @@ class TaskController extends Controller
                 }
                 $issue->save();
                 $this->autoMakeComment(1, $request->user()->id, $issue->id, "");
-                if($issue->assignee_id) {
+                if($issue->assignee_id && $issue->assignee_id != $request->user()->id) {
                     $this->makeNotification($issue->assignee_id, $issue->task_key, 1);
                 }
                 
@@ -206,14 +206,14 @@ class TaskController extends Controller
 
                     if($request->assignee_id && $request->assignee_id !== $issue->assignee_id && $request->assignee_id != $user_id) {
                         $issue->assignee_id = $request->assignee_id;
-                            $this->makeNotification($issue->assignee_id, $issue->task_key, 1);
+                        $this->makeNotification($issue->assignee_id, $issue->task_key, 1);
                     }
                     if($request->estimate_time) $issue->estimate_time = $request->estimate_time;
                     $issue->update();
                     // if($request->assignee_id && $request->assignee_id != $issue->assignee_id)  $issue->refresh();
                     $issue = Task::with('subTasks', 'assignee:id,name,avatar')->find($id);
-                    // notify to assignee
-                    $this->makeNotification($issue->assignee_id, $issue->task_key, 2);
+                    // thông báo cho nhiều người.
+                    if($request->assignee_id != $user_id) $this->makeNotification($issue->assignee_id, $issue->task_key, 2);
                     //make log
                     $newValues = $request->all();
                     $logChanges = [];

@@ -101,7 +101,6 @@ class MilestoneController extends Controller
     {
         $milestone = Milestone::with('tasks.subtasks.comments')->find($id);
         if($this->checkInsideProject($request, $milestone->project_id) && $request->user()->role == UserRole::PM){
-            $milestone = Milestone::with('tasks.subtasks.comments')->find($id);
 
             if (!$milestone) {
                 return response()->json(['message' => 'Milestone not found'], 404);
@@ -126,7 +125,7 @@ class MilestoneController extends Controller
             $milestone->delete();
     
             return $this->jsonResponse(true, "This Milestone and related data deleted successfully",[]);}
-            
+
         return $this->jsonResponse(false, "Forbidden", [], 403);
        
     }

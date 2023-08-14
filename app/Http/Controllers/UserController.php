@@ -98,13 +98,6 @@ class UserController extends Controller
                     $user->role = $request->role;
                     if($request->avatar && strcmp($request->avatar, $user->avatar) !== 0) 
                         $user->avatar = $request->avatar;
-                    // $old_path = $user->avatar;
-                //     if($request->avatar && strcmp($request->avatar, $old_path) != 0  && $request->avatar->isValid()){
-                //         $file_name = $user->id.'.'.$request->avatar->extension();
-                //         $request->file('avatar')->storeAs('public/images/avatars', $file_name );
-                //         $path = "public/images/avatars/$file_name ";
-                //         $user->avatar = $path;
-                // }
                 $user->update();
                 return response()->json(['status'=>'true', 'message'=>'Profile Updated!', 'data'=>$user]);
 

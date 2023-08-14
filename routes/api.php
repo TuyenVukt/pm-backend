@@ -32,7 +32,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         return $title;
     });
     Route::post('/logout', [AuthController::class, 'logout']);
-
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/member_workspace/{id}', [UserController::class,'getAllUserInWorkspace']);
     Route::get('/my_profile', [UserController::class,'getProfile']);
@@ -63,11 +62,9 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/project/{id}/milestones', [MilestoneController::class, 'getMilestoneByProject']);
     Route::post('/milestone/{id}', [MilestoneController::class, 'update']);
     Route::delete('/milestone/{id}', [MilestoneController::class, 'destroy']);
-    //lấy Task theo milestone
     //task
     Route::post('/task', [TaskController::class, 'store']);
     Route::post('/task/{id}', [TaskController::class, 'update']);
-    // Route::get('/task/{id}', [TaskController::class, 'findById']);
     Route::get('/task/{id}', [TaskController::class, 'findById']);
     Route::delete('/task/{id}', [TaskController::class, 'destroy']);
     Route::get('/get-tasks/{project_id}', [TaskController::class, 'show']);
@@ -82,15 +79,13 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/get-comments-by-task/{id}', [ CommentController::class, 'getCommentsByTask']);
     Route::post('/comment/{id}', [CommentController::class, 'editComment']);
     Route::get('update_in_project/{project_id}', [CommentController::class, 'getCommentsByProject']);
-
     //document
     Route::post('/document', [DocumentController::class, 'create']);
     Route::delete('/document', [DocumentController::class, 'destroy']);
     Route::post('/document/{id}', [DocumentController::class, 'update']);
     Route::get('/document/{doc_id}', [DocumentController::class, 'get']);
     Route::get('/documents_by_project/{project_id}', [DocumentController::class, 'getFilesByProject']);
-
-    //noti
+    //notification
     Route::get('/notifications/{user_id}', [NotificationController::class, 'getNotiByUser']);
     Route::get('/count_noti', [NotificationController::class, 'countUnreadNotiByUser']);
     Route::post('/read_noti/{id}', [NotificationController::class, 'readNotification']);

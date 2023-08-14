@@ -23,13 +23,21 @@ class CommentController extends Controller
                 'type'              =>"NORMAL",
             ]);
 
-            if($request->notity_assignee){
-                $task = Task::find($request->task_id);
-                if($task && $task->assignee_id) 
-                    $this->makeNotification($task->assignee_id, $task->task_key, 3);
-            }
+            // Lấy danh sách người đã từng comment vào task trước đó
+        $task = Task::find($request->task_id);
+        // $previousCommenters = $task->comments()->distinct()->pluck('created_by')->toArray();
+        // // Gửi thông báo tới những người đã từng comment
+        $previousCommenters = $task->comments()->distinct()->pluck('created_by')->toArray();
+        $notifiedUsers = array_unique(array_merge($previousCommenters, [$task->assignee_id]));
 
-            return $this->jsonResponse('true', 'Comment created Successfully!', $comment);
+        // Loại bỏ bản thân người comment và người tạo task
+        $notifiedUsers = array_diff($notifiedUsers, [$request->user()->id]);
+
+        foreach ($notifiedUsers as $commenter) {
+            if($commenter == $task->getCommentsByProjectassignee_id) $this->makeNotification($commenter, $task->task_key, 3);
+            else  $this->makeNotification($commenter, $task->task_key, 4);
+        }
+            return $this->jsonResponse('true', 'Comment created Successfully!', $notifiedUsers);
         }
 
     }
@@ -68,6 +76,7 @@ class CommentController extends Controller
             'total' => $comments->total(),
             'current_page_url' => $comments->url($comments->currentPage())
         ];
+        //thông báo cho nhiều người.
 
         return $this->jsonResponse('true', 'Comments of Task!', $data);
     }

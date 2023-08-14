@@ -72,7 +72,15 @@ class Controller extends BaseController
             $noti = Notification::create([
                 'content'           => $content,
                 'user_id'           => $user_id,
-            ]);
+            ]); 
+            
+            if($noti) return true;
+        } else if($type === 4){
+            $content = "Task: ".$key.". The task you commented had a new comment";
+            $noti = Notification::create([
+                'content'           => $content,
+                'user_id'           => $user_id,
+            ]); 
             
             if($noti) return true;
         }
