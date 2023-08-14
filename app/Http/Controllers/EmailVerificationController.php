@@ -39,7 +39,7 @@ class EmailVerificationController extends Controller
                 $user->is_active = true;
                 $user->save();
     
-                return redirect('http://localhost:3000/sign-in');
+                return redirect('https://project-m-alpha.vercel.app/sign-in');
             }
         }
     

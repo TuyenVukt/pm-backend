@@ -66,16 +66,9 @@ class WorkspaceController extends Controller
                     $workspace->organization_name = $request->organization_name;
                     $workspace->domain = $request->domain;
                     $workspace->description = $request->description;
-                    // $old_path = $workspace->avatar;
-                //     if(strcmp($request->avatar, $old_path) === 0  && $request->avatar->isValid()){
-                //         $file_name = $user->id.'.'.$request->avatar->extension();
-                //         $request->file('avatar')->storeAs('public/images/avatars', $file_name );
-                //         $path = "images/avatars/$file_name ";
-                //         $user->avatar = $path;
-                // }
-                if($request->avatar && strcmp($request->avatar, $workspace->avatar) !== 0)  $workspace->avatar = $request->avatar;
-                $workspace->update();
-                return $this->jsonResponse(true, "Workspace updated successfully!", $workspace);
+                    if($request->avatar && strcmp($request->avatar, $workspace->avatar) !== 0)  $workspace->avatar = $request->avatar;
+                    $workspace->update();
+                    return $this->jsonResponse(true, "Workspace updated successfully!", $workspace);
                 } else 
                     return $this->jsonResponse(false, "Workspace not found!", [], 404);
 
