@@ -44,11 +44,11 @@ class VerifyEmailWithToken extends VerifyEmail
     public function toMail($notifiable)
     {
         //link-token-verify
-          $verificationUrl = url(route('verification.verify', [
-            'id' => $notifiable->getKey(),
-            'token' => $this->token,
-        ], false));
-        // $verificationUrl = 'https://projectm-tuyenvu.duckdns.org/api/verify-email/'. $notifiable->getKey().'/'.$this->token;
+        //   $verificationUrl = url(route('verification.verify', [
+        //     'id' => $notifiable->getKey(),
+        //     'token' => $this->token,
+        // ], false));
+        $verificationUrl = 'https://projectm-tuyenvu.duckdns.org/api/verify-email/'. $notifiable->getKey().'/'.$this->token;
 
         return (new MailMessage)
             ->subject('Verify Email Address')
